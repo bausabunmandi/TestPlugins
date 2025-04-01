@@ -89,7 +89,7 @@ class ExampleSite : MainAPI() {
             // rating = 8
         }
     }
-    
+
     // Add this to your plugin class
     override suspend fun loadLinks(
         data: String,
@@ -101,12 +101,11 @@ class ExampleSite : MainAPI() {
             val document = app.get(data).document
             
             // 1. Find StreamHG iframe
-            val iframeSrc = document.selectFirst(".video-player iframe")?.attr("src")?.hasScheme()
-                ?: return false
+            val iframeSrc = document.selectFirst(".video-player iframe")?.attr("src")
 
             // 2. Process StreamHG URL
-            resolveStreamHG(iframeSrc, callback)
-            
+            // resolveStreamHG(iframeSrc, callback)
+            loadExtractor(iframeSrc, subtitleCallback, callback)
             return true
         } catch (e: Exception) {
             return false
@@ -135,7 +134,7 @@ class ExampleSite : MainAPI() {
             ExtractorLink(
                 source = name,
                 name = name,
-                url = videoUrl.hasScheme() ?: "https:$videoUrl",
+                url = videoUrl,
                 referer = url,
                 quality = quality,
                 isM3u8 = videoUrl.contains(".m3u8")
