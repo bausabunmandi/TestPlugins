@@ -1,17 +1,14 @@
 package com.sabunmandi
 
-import com.lagradost.cloudstream3.MainAPI
-import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 import org.jsoup.nodes.Element
 
 class ExampleSitePlugin : MainAPI() {
-    override var mainUrl = "https://igodesu.tv"  // Replace with your site URL
-    override var name = "Example Site"  // Replace with your provider name
+    override var mainUrl = "https://igodesu.tv"
+    override var name = "Example Site"
     override val hasMainPage = true
-    override val supportedTypes = setOf(TvType.Movie)  // Change to appropriate type
+    override val supportedTypes = setOf(TvType.Movie)
     override val hasDownloadSupport = false
 
     // =========================== Main Page ===========================
@@ -19,25 +16,28 @@ class ExampleSitePlugin : MainAPI() {
         val document = app.get(mainUrl).document
         val allItems = ArrayList<HomePageList>()
 
-        document.select(".post-list .video-item").mapNotNull { item ->
-            // Extract common elements
+        val list = document.select(".post-list .video-item").mapNotNull { item ->
             val content = item.selectFirst(".featured-content-image") ?: return@mapNotNull null
-            val href = content.selectFirst("a")?.attr("href") ?: return@mapNotNull null
-            val title = content.selectFirst("img")?.attr("alt") ?: "No Title"
-            val poster = content.selectFirst("img")?.attr("src")
-            
-            MovieSearchResponse(
+            val href = content.selectFirst("a")?.attr("href")?.trim() ?: return@mapNotNull null
+            val title = content.selectFirst("img")?.attr("alt")?.trim() ?: "No Title"
+            val poster = content.selectFirst("img")?.attr("src")?.trim()
+
+            newMovieSearchResponse(
                 name = title,
                 url = href,
-                apiName = this.name,
-                type = TvType.Movie,  // Change to appropriate type
-                posterUrl = poster
-            )
-        }.let { 
-            allItems.add(HomePageList("Latest Videos", it))
+                type = TvType.Movie,
+                apiName = this.name
+            ) {
+                this.posterUrl = poster
+                // quality = SearchQuality.HD // Add if quality info available
+            }
         }
 
-        return HomePageResponse(allItems)
+        if (list.isNotEmpty()) {
+            allItems.add(HomePageList("Latest Videos", list))
+        }
+
+        return newHomePageResponse(allItems, hasNext = false)
     }
 
     // =========================== Search ===========================
@@ -45,18 +45,19 @@ class ExampleSitePlugin : MainAPI() {
         val searchUrl = "$mainUrl/?s=${query}"
         val document = app.get(searchUrl).document
 
-        return document.select(".video-item").mapNotNull { 
-            val href = it.selectFirst("a")?.attr("href") ?: return@mapNotNull null
-            val title = it.selectFirst("img")?.attr("alt") ?: "No Title"
-            val poster = it.selectFirst("img")?.attr("src")
+        return document.select(".video-item").mapNotNull {
+            val href = it.selectFirst("a")?.attr("href")?.trim() ?: return@mapNotNull null
+            val title = it.selectFirst("img")?.attr("alt")?.trim() ?: "No Title"
+            val poster = it.selectFirst("img")?.attr("src")?.trim()
 
-            MovieSearchResponse(
+            newMovieSearchResponse(
                 name = title,
                 url = href,
-                apiName = this.name,
                 type = TvType.Movie,
-                posterUrl = poster
-            )
+                apiName = this.name
+            ) {
+                this.posterUrl = poster
+            }
         }
     }
 
@@ -64,25 +65,28 @@ class ExampleSitePlugin : MainAPI() {
     override suspend fun load(url: String): LoadResponse {
         val document = app.get(url).document
         
-        // Extract details
-        val title = document.selectFirst("h1.title")?.text() ?: "No Title"
-        val poster = document.selectFirst(".featured-image img")?.attr("src")
-        val description = document.selectFirst(".description")?.text()
+        val title = document.selectFirst("h1.title")?.text()?.trim() ?: "No Title"
+        val poster = document.selectFirst(".featured-image img")?.attr("src")?.trim()
+        val description = document.selectFirst(".description")?.text()?.trim()
         
-        // Extract video URL (adjust selector based on actual page structure)
-        val videoUrl = document.selectFirst("video source")?.attr("src") 
-            ?: document.selectFirst("iframe")?.attr("src")
+        val videoUrl = document.selectFirst("video source")?.attr("src")?.trim()
+            ?: document.selectFirst("iframe")?.attr("src")?.trim()
             ?: throw ErrorLoadingException("No video found")
 
-        return MovieLoadResponse(
+        return newMovieLoadResponse(
             name = title,
             url = url,
-            apiName = this.name,
             type = TvType.Movie,
             dataUrl = videoUrl,
-            posterUrl = poster,
-            plot = description,
-            year = null  // Add year extraction if available
-        )
+            apiName = this.name
+        ) {
+            this.posterUrl = poster
+            this.plot = description
+            this.contentRating = ContentRating.Unknown // Update if site provides rating info
+            // Add other fields if available:
+            // year = 2023
+            // duration = 120
+            // rating = 8
+        }
     }
 }
