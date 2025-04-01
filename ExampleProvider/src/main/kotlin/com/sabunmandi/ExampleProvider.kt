@@ -101,7 +101,7 @@ class ExampleSite : MainAPI() {
             val document = app.get(data).document
             
             // 1. Find StreamHG iframe
-            val iframeSrc = document.selectFirst(".video-player iframe").attr("src")
+            val iframeSrc = document.select(".video-player iframe").attr("src")
 
             // 2. Process StreamHG URL
             // resolveStreamHG(iframeSrc, callback)
@@ -112,33 +112,33 @@ class ExampleSite : MainAPI() {
         }
     }
 
-    private suspend fun resolveStreamHG(url: String, callback: (ExtractorLink) -> Unit) {
-        val response = app.get(url, referer = mainUrl)
+    // private suspend fun resolveStreamHG(url: String, callback: (ExtractorLink) -> Unit) {
+    //     val response = app.get(url, referer = mainUrl)
         
-        // Extract encrypted source from script
-        val scriptContent = response.document.select("script:containsData(sources)").html()
-        val videoUrl = Regex("""sources:\s*\[\s*\{\s*file:\s*'(.*?)'""").find(scriptContent)
-            ?.groupValues?.get(1)
-            ?.replace("\\/", "/")
-            ?: throw ErrorLoadingException("No StreamHG source found")
+    //     // Extract encrypted source from script
+    //     val scriptContent = response.document.select("script:containsData(sources)").html()
+    //     val videoUrl = Regex("""sources:\s*\[\s*\{\s*file:\s*'(.*?)'""").find(scriptContent)
+    //         ?.groupValues?.get(1)
+    //         ?.replace("\\/", "/")
+    //         ?: throw ErrorLoadingException("No StreamHG source found")
 
-        // // Get quality from URL pattern
-        // val quality = when {
-        //     videoUrl.contains("/1080/") -> Qualities.FullHDP.value
-        //     videoUrl.contains("/720/") -> Qualities.HD.value
-        //     videoUrl.contains("/480/") -> Qualities.SD.value
-        //     else -> Qualities.Unknown.value
-        // }
+    //     // // Get quality from URL pattern
+    //     // val quality = when {
+    //     //     videoUrl.contains("/1080/") -> Qualities.FullHDP.value
+    //     //     videoUrl.contains("/720/") -> Qualities.HD.value
+    //     //     videoUrl.contains("/480/") -> Qualities.SD.value
+    //     //     else -> Qualities.Unknown.value
+    //     // }
 
-        callback.invoke(
-            ExtractorLink(
-                source = name,
-                name = name,
-                url = videoUrl,
-                referer = url,
-                // quality = quality,
-                isM3u8 = videoUrl.contains(".m3u8")
-            )
-        )
-    }
+    //     callback.invoke(
+    //         ExtractorLink(
+    //             source = name,
+    //             name = name,
+    //             url = videoUrl,
+    //             referer = url,
+    //             // quality = quality,
+    //             isM3u8 = videoUrl.contains(".m3u8")
+    //         )
+    //     )
+    // }
 }
