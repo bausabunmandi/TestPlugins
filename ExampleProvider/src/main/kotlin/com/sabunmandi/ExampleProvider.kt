@@ -1,4 +1,4 @@
-package com.example
+package com.sabunmandi
 
 import androidx.appcompat.app.AppCompatActivity
 import com.lagradost.cloudstream3.TvType
