@@ -1,11 +1,13 @@
 package com.sabunmandi
 
+import com.lagradost.cloudstream3.MainAPI
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 import org.jsoup.nodes.Element
 
-@CloudstreamPlugin
-class ExampleSitePlugin : Plugin() {
+class ExampleSitePlugin : MainAPI() {
     override var mainUrl = "https://igodesu.tv"  // Replace with your site URL
     override var name = "Example Site"  // Replace with your provider name
     override val hasMainPage = true
