@@ -1,0 +1,154 @@
+[
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=amoytoge.xyz&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/bausabunmandi/TestPlugins",
+        "fileSize": 15974,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "SabunMandi"
+        ],
+        "tvTypes": [
+            "Movie"
+        ],
+        "version": -1,
+        "internalName": "amoytoge",
+        "description": "Lorem ipsum",
+        "url": "https://raw.githubusercontent.com/bausabunmandi/TestPlugins/builds/amoytoge.cs3",
+        "name": "amoytoge"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=avtub.men&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/bausabunmandi/TestPlugins",
+        "fileSize": 14996,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "SabunMandi"
+        ],
+        "tvTypes": [
+            "Movie"
+        ],
+        "version": -1,
+        "internalName": "avtub",
+        "description": "Lorem ipsum",
+        "url": "https://raw.githubusercontent.com/bausabunmandi/TestPlugins/builds/avtub.cs3",
+        "name": "avtub"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=bokepkamu.com&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/bausabunmandi/TestPlugins",
+        "fileSize": 15766,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "SabunMandi"
+        ],
+        "tvTypes": [
+            "Movie"
+        ],
+        "version": -1,
+        "internalName": "bokepkamu",
+        "description": "Lorem ipsum",
+        "url": "https://raw.githubusercontent.com/bausabunmandi/TestPlugins/builds/bokepkamu.cs3",
+        "name": "bokepkamu"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=bokepnusa.com&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/bausabunmandi/TestPlugins",
+        "fileSize": 15757,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "SabunMandi"
+        ],
+        "tvTypes": [
+            "Movie"
+        ],
+        "version": -1,
+        "internalName": "bokepnusa",
+        "description": "Lorem ipsum",
+        "url": "https://raw.githubusercontent.com/bausabunmandi/TestPlugins/builds/bokepnusa.cs3",
+        "name": "bokepnusa"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=drbokep.skin&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/bausabunmandi/TestPlugins",
+        "fileSize": 15628,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "SabunMandi"
+        ],
+        "tvTypes": [
+            "Movie"
+        ],
+        "version": -1,
+        "internalName": "drbokep",
+        "description": "Lorem ipsum",
+        "url": "https://raw.githubusercontent.com/bausabunmandi/TestPlugins/builds/drbokep.cs3",
+        "name": "drbokep"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=igodesu.tv&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/bausabunmandi/TestPlugins",
+        "fileSize": 14514,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "SabunMandi"
+        ],
+        "tvTypes": [
+            "Movie"
+        ],
+        "version": -1,
+        "internalName": "igodesu",
+        "description": "Lorem ipsum",
+        "url": "https://raw.githubusercontent.com/bausabunmandi/TestPlugins/builds/igodesu.cs3",
+        "name": "igodesu"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=ruangbokep.co&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/bausabunmandi/TestPlugins",
+        "fileSize": 15736,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "SabunMandi"
+        ],
+        "tvTypes": [
+            "Movie"
+        ],
+        "version": -1,
+        "internalName": "ruangbokep",
+        "description": "Lorem ipsum",
+        "url": "https://raw.githubusercontent.com/bausabunmandi/TestPlugins/builds/ruangbokep.cs3",
+        "name": "ruangbokep"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=sebokep.com&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/bausabunmandi/TestPlugins",
+        "fileSize": 17583,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "SabunMandi"
+        ],
+        "tvTypes": [
+            "Movie"
+        ],
+        "version": -1,
+        "internalName": "sebokep",
+        "description": "Lorem ipsum",
+        "url": "https://raw.githubusercontent.com/bausabunmandi/TestPlugins/builds/sebokep.cs3",
+        "name": "sebokep"
+    }
+]
