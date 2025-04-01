@@ -89,4 +89,57 @@ class ExampleSite : MainAPI() {
             // rating = 8
         }
     }
+    
+    // Add this to your plugin class
+    override suspend fun loadLinks(
+        data: String,
+        isCasting: Boolean,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ): Boolean {
+        try {
+            val document = app.get(data).document
+            
+            // 1. Find StreamHG iframe
+            val iframeSrc = document.selectFirst(".video-player iframe")?.attr("src")?.hasScheme()
+                ?: return false
+
+            // 2. Process StreamHG URL
+            resolveStreamHG(iframeSrc, callback)
+            
+            return true
+        } catch (e: Exception) {
+            return false
+        }
+    }
+
+    private suspend fun resolveStreamHG(url: String, callback: (ExtractorLink) -> Unit) {
+        val response = app.get(url, referer = mainUrl)
+        
+        // Extract encrypted source from script
+        val scriptContent = response.document.select("script:containsData(sources)").html()
+        val videoUrl = Regex("""sources:\s*\[\s*\{\s*file:\s*'(.*?)'""").find(scriptContent)
+            ?.groupValues?.get(1)
+            ?.replace("\\/", "/")
+            ?: throw ErrorLoadingException("No StreamHG source found")
+
+        // Get quality from URL pattern
+        val quality = when {
+            videoUrl.contains("/1080/") -> Qualities.FullHDP.value
+            videoUrl.contains("/720/") -> Qualities.HD.value
+            videoUrl.contains("/480/") -> Qualities.SD.value
+            else -> Qualities.Unknown.value
+        }
+
+        callback.invoke(
+            ExtractorLink(
+                source = name,
+                name = name,
+                url = videoUrl.hasScheme() ?: "https:$videoUrl",
+                referer = url,
+                quality = quality,
+                isM3u8 = videoUrl.contains(".m3u8")
+            )
+        )
+    }
 }
