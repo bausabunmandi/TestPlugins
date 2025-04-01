@@ -1,80 +1,87 @@
 package com.example
 
-import com.lagradost.cloudstream3.plugins.CloudstreamPlugin
-import com.lagradost.cloudstream3.plugins.Plugin
-import com.lagradost.cloudstream3.APIHolder
-import android.content.Context
-import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
-import android.annotation.SuppressLint
-import hascheme
-import okhttp3.Request
-import android.util.Log
-import org.jsoup.nodes.Element
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
+import org.jsoup.nodes.Element
 
 @CloudstreamPlugin
 class ExampleSitePlugin : Plugin() {
-    override fun load() {
-        // Replace "ExampleSite" with your provider's name
-        registerMainAPI("Igodesu", "https://igodesu.tv", "en")
+    override var mainUrl = "https://igodesu.tv"  // Replace with your site URL
+    override var name = "Example Site"  // Replace with your provider name
+    override val hasMainPage = true
+    override val supportedTypes = setOf(TvType.Movie)  // Change to appropriate type
+    override val hasDownloadSupport = false
+
+    // =========================== Main Page ===========================
+    override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
+        val document = app.get(mainUrl).document
+        val allItems = ArrayList<HomePageList>()
+
+        document.select(".post-list .video-item").mapNotNull { item ->
+            // Extract common elements
+            val content = item.selectFirst(".featured-content-image") ?: return@mapNotNull null
+            val href = content.selectFirst("a")?.attr("href") ?: return@mapNotNull null
+            val title = content.selectFirst("img")?.attr("alt") ?: "No Title"
+            val poster = content.selectFirst("img")?.attr("src")
+            
+            MovieSearchResponse(
+                name = title,
+                url = href,
+                apiName = this.name,
+                type = TvType.Movie,  // Change to appropriate type
+                posterUrl = poster,
+                quality = Quality.HD  // Add quality if available
+            )
+        }.let { 
+            allItems.add(HomePageList("Latest Videos", it))
+        }
+
+        return HomePageResponse(allItems)
     }
 
-    @SuppressLint("SuspiciousIndentation")
-    private fun registerMainAPI(name: String, baseUrl: String, lang: String) {
-        registerMainAPI(
-            name = name,
-            mainUrl = baseUrl,
-            lang = lang,
-        ) { _, page ->
+    // =========================== Search ===========================
+    override suspend fun search(query: String): List<SearchResponse> {
+        val searchUrl = "$mainUrl/?s=${query}"
+        val document = app.get(searchUrl).document
 
-            // Homepage request
-            val document = app.get(baseUrl, headers = Headers.headers("Referer" to baseUrl)).document
+        return document.select(".video-item").mapNotNull { 
+            val href = it.selectFirst("a")?.attr("href") ?: return@mapNotNull null
+            val title = it.selectFirst("img")?.attr("alt") ?: "No Title"
+            val poster = it.selectFirst("img")?.attr("src")
 
-            // Parse video list
-            val videoList = document.select(".post-list .video-item").mapNotNull { item ->
-                val content = item.selectFirst(".featured-content-image")
-                val link = content?.selectFirst("a")?.attr("href") ?: return@mapNotNull null
-                val thumbnail = content.selectFirst("img")?.attr("src")
-                val title = content.selectFirst("img")?.attr("alt") 
-                    ?: content.selectFirst("a")?.attr("title") 
-                    ?: "Untitled"
-
-                MovieSearchResponse(
-                    name = title,
-                    url = link.hasScheme(),
-                    posterUrl = thumbnail?.hasScheme(),
-                    quality = "HD" // You can extract quality from item if available
-                )
-            }
-
-            // Return the results
-            return@registerMainAPI videoList
+            MovieSearchResponse(
+                name = title,
+                url = href,
+                apiName = this.name,
+                type = TvType.Movie,
+                posterUrl = poster
+            )
         }
+    }
 
-        // Register video provider
-        registerVideoProvider(
-            name = name,
-            mainUrl = baseUrl,
-            logo = "" // Add logo URL if available
-        ) { url, episode ->
-            
-            // Video page request
-            val document = app.get(url, referer = baseUrl).document
-            
-            // Extract video URL - ADJUST THIS SELECTOR BASED ON ACTUAL VIDEO PAGE STRUCTURE
-            val videoUrl = document.selectFirst("video source")?.attr("src")
-                ?: document.selectFirst("iframe")?.attr("src")
-            
-            if (videoUrl != null) {
-                // Handle iframe content if needed
-                if (videoUrl.contains("http", true)) {
-                    return@registerVideoProvider VideoResult(videoUrl.hasScheme())
-                }
-            }
-            
-            throw ErrorException("No video found")
-        }
+    // =========================== Load Links ===========================
+    override suspend fun load(url: String): LoadResponse {
+        val document = app.get(url).document
+        
+        // Extract details
+        val title = document.selectFirst("h1.title")?.text() ?: "No Title"
+        val poster = document.selectFirst(".featured-image img")?.attr("src")
+        val description = document.selectFirst(".description")?.text()
+        
+        // Extract video URL (adjust selector based on actual page structure)
+        val videoUrl = document.selectFirst("video source")?.attr("src") 
+            ?: document.selectFirst("iframe")?.attr("src")
+            ?: throw ErrorLoadingException("No video found")
+
+        return MovieLoadResponse(
+            name = title,
+            url = url,
+            apiName = this.name,
+            type = TvType.Movie,
+            dataUrl = videoUrl,
+            posterUrl = poster,
+            plot = description,
+            year = null  // Add year extraction if available
+        )
     }
 }
