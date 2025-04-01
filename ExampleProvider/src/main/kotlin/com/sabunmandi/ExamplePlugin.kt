@@ -26,9 +26,9 @@ class ExampleSitePlugin : MainAPI() {
                 name = title,
                 url = href,
                 type = TvType.Movie,
-                apiName = this.name
             ) {
                 this.posterUrl = poster
+                this.apiName = this@ExampleSitePlugin.name
                 // quality = SearchQuality.HD // Add if quality info available
             }
         }
@@ -54,9 +54,9 @@ class ExampleSitePlugin : MainAPI() {
                 name = title,
                 url = href,
                 type = TvType.Movie,
-                apiName = this.name
             ) {
                 this.posterUrl = poster
+                this.apiName = this@ExampleSitePlugin.name
             }
         }
     }
@@ -78,10 +78,10 @@ class ExampleSitePlugin : MainAPI() {
             url = url,
             type = TvType.Movie,
             dataUrl = videoUrl,
-            apiName = this.name
         ) {
             this.posterUrl = poster
             this.plot = description
+            this.apiName = this@ExampleSitePlugin.name
             this.contentRating = ContentRating.Unknown // Update if site provides rating info
             // Add other fields if available:
             // year = 2023
