@@ -31,8 +31,7 @@ class ExampleSitePlugin : MainAPI() {
                 url = href,
                 apiName = this.name,
                 type = TvType.Movie,  // Change to appropriate type
-                posterUrl = poster,
-                quality = Quality.HD  // Add quality if available
+                posterUrl = poster
             )
         }.let { 
             allItems.add(HomePageList("Latest Videos", it))
