@@ -102,7 +102,7 @@ class ExampleSite : MainAPI() {
             name = title,
             url = url,
             type = TvType.Movie,
-            dataUrl = videoUrl,
+            dataUrl = url,
         ) {
             this.posterUrl = poster
             this.plot = description
@@ -121,7 +121,7 @@ class ExampleSite : MainAPI() {
             val iframeUrl = mainDoc.selectFirst(".video-player iframe")?.attr("src")
             println("DEBUG - Iframe URL: $iframeUrl")
             if (iframeUrl == null) {
-                println("DEBUG - No iframe found!")
+                println("DEBUG - No iframe found! : $data")
                 return false
             }
             
