@@ -146,8 +146,9 @@ class Avtub : MainAPI() {
         // ?: document.selectFirst("iframe")?.attr("src")?.trim()
         // ?: throw ErrorLoadingException("No video found")
         // val videoUrl = document.selectFirst(".video-player iframe")?.attr("src")?.trim() ?: ""
-        val initialIframe = document.selectFirst(".video-player iframe")?.attr("src")?.trim() ?: ""
-        val videoUrl = resolveNestedIframe(initialIframe)
+        val initialIframeUrl = document.selectFirst(".video-player iframe")?.attr("src")?.fixUrl()
+        ?: throw ErrorLoadingException("No video iframe found")
+        val videoUrl = resolveNestedIframe(initialIframeUrl)
 
         return newMovieLoadResponse(
             name = title,
@@ -230,25 +231,24 @@ class Avtub : MainAPI() {
         }
     }
 
-    private suspend fun resolveNestedIframe(url: String, maxDepth: Int = 3): String {
-        println("Resolving iframe: $url (depth ${4 - maxDepth})")
-
-        if (maxDepth <= 0) throw ErrorLoadingException("Maximum iframe depth reached")
+    private suspend fun resolveNestedIframe(url: String, depth: Int = 3): String {
+        println("Resolving iframe (depth ${4 - depth}): $url")
+        if (depth <= 0) throw ErrorLoadingException("Maximum iframe depth reached")
         
-        val document = app.get(url, referer = mainUrl).document
+        val doc = app.get(url, referer = mainUrl).document
         
-        // First try to find direct video source
-        document.selectFirst("video source")?.attr("src")?.let { directUrl ->
-            return directUrl.fixUrl()
+        // Check for direct video source first
+        doc.selectFirst("video source")?.attr("src")?.fixUrl()?.let {
+            return it
         }
         
         // Check for nested iframe
-        val iframeSrc = document.selectFirst("iframe")?.attr("src")?.fixUrl()
+        val newUrl = doc.selectFirst("iframe")?.attr("src")?.fixUrl()
             ?: throw ErrorLoadingException("No video source found")
         
-        // Recursively resolve nested iframe
-        return resolveNestedIframe(iframeSrc, maxDepth - 1)
+        return resolveNestedIframe(newUrl, depth - 1)
     }
+    
     
     
 
