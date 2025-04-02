@@ -95,10 +95,10 @@ class ExampleSite : MainAPI() {
         ?: throw ErrorLoadingException("No video found")
 
         return newMovieLoadResponse(
-            title, 
-            url, 
-            TvType.Movie
-            videoUrl
+            name = title,
+            url = url,
+            type = TvType.Movie,
+            dataUrl = videoUrl,
         ) {
             this.posterUrl = poster
             this.plot = description
@@ -127,7 +127,7 @@ class ExampleSite : MainAPI() {
                     url = iframeUrl,
                     referer = "https://cybervynx.com/",
                     quality = Qualities.Unknown.value, // Mandatory parameter
-                    type = ExtractorLinkType.HLS // Replaces isM3u8
+                    isM3u8 = true
                 )
             )
     
