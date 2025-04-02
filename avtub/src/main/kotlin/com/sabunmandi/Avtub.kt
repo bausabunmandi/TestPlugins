@@ -7,20 +7,16 @@ import org.jsoup.nodes.Element
 // https://avtub.men/category/bokep-indo/
 // avtub.app
 class Avtub : MainAPI() {
-    override var mainUrl = "https://avtub.men/category/bokep-indo"
+    override var mainUrl = "https://avtub.men/"
     override var name = "Avtub"
     override val hasMainPage = true
     override val supportedTypes = setOf(TvType.Movie)
     override val hasDownloadSupport = false
 
     override val mainPage = mainPageOf(
-        // "$mainUrl" to "New Videos",
-        // "$mainUrl/popular" to "Popular",
-        // "$mainUrl/random" to "Random",
-        // "$mainUrl/longest/" to "Longest"
-        "$mainUrl/?filter=latest" to "Latest",
-        // "$mainUrl/?filter=random" to "Random",
-        "$mainUrl/?filter=most-viewed" to "Most Viewed",
+        "$mainUrl/category/bokep-indo/?filter=latest" to "Latest",
+        "$mainUrl/category/bokep-indo/?filter=most-viewed" to "Most Viewed",
+        "$mainUrl/category/bokep-indo/?filter=random" to "Random"
     )
 
     override suspend fun getMainPage(
@@ -31,12 +27,14 @@ class Avtub : MainAPI() {
 
         // Parse base URL and existing query parameters
         val (basePath, queryParams) = request.data.split("?", limit = 2).let {
-            it[0] to it.getOrNull(1)
+            it[0].removeSuffix("/") to it.getOrNull(1)
         }
-
+    
         // Build paginated URL
         val targetUrl = buildString {
-            append(if (page > 1) "$basePath/page/$page/" else basePath)
+            append(basePath)
+            if (page > 1) append("/page/$page")
+            append("/")  // Ensure trailing slash
             if (!queryParams.isNullOrEmpty()) append("?$queryParams")
         }
         
