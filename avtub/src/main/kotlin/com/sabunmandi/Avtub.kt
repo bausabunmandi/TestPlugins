@@ -19,7 +19,7 @@ class Avtub : MainAPI() {
         // "$mainUrl/random" to "Random",
         // "$mainUrl/longest/" to "Longest"
         "$mainUrl/" to "Latest",
-        "$mainUrl/?filter=random" to "Random"
+        "$mainUrl/?filter=random" to "Random",
         "$mainUrl/?filter=most-viewed" to "Most Viewed",
     )
 
