@@ -16,32 +16,37 @@ class ExampleSite : MainAPI() {
     override val hasDownloadSupport = false
 
     // =========================== Main Page ===========================
-    override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        val document = app.get(mainUrl).document
-        val allItems = ArrayList<HomePageList>()
-
-        val list = document.select(".post-list .video-item").mapNotNull { item ->
+    override suspend fun getMainPage(
+        page: Int,
+        request: MainPageRequest
+    ): HomePageResponse {
+        val targetUrl = if (page == 1) mainUrl else "$mainUrl/page/$page/"
+        
+        val document = app.get(targetUrl).document
+        
+        val items = document.select(".post-list .video-item").mapNotNull { item ->
             val content = item.selectFirst(".featured-content-image") ?: return@mapNotNull null
-            val href = content.selectFirst("a")?.attr("href")?.trim() ?: return@mapNotNull null
-            val title = content.selectFirst("img")?.attr("alt")?.trim() ?: "No Title"
-            val poster = content.selectFirst("img")?.attr("src")?.trim()
+            val href = content.selectFirst("a")?.attr("href") ?: return@mapNotNull null
+            val title = content.selectFirst("img")?.attr("alt") ?: "No Title"
+            val poster = content.selectFirst("img")?.attr("src")
 
-            newMovieSearchResponse(
-                name = title,
-                url = href,
-                type = TvType.Movie,
-            ) {
+            newMovieSearchResponse(title, href, TvType.Movie) {
                 this.posterUrl = poster
-                // this.apiName = this@ExampleSitePlugin.name
-                // quality = SearchQuality.HD // Add if quality info available
+                this.apiName = this@ExampleSitePlugin.name
             }
         }
 
-        if (list.isNotEmpty()) {
-            allItems.add(HomePageList("Latest Videos", list))
+        // Improved pagination detection
+        val hasNext = document.select("ul.pagination").let { pagination ->
+            pagination?.last()?.select("li:last-child a:contains(Next)")?.firstOrNull()?.let {
+                it.text().equals("Next", ignoreCase = true) && it.attr("href").contains("/page/")
+            } ?: false
         }
 
-        return newHomePageResponse(allItems, hasNext = false)
+        return newHomePageResponse(
+            listOf(HomePageList("Latest Videos", items)),
+            hasNext = hasNext
+        )
     }
 
     // =========================== Search ===========================
