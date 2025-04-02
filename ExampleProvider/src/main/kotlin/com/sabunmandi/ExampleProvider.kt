@@ -136,11 +136,30 @@ class ExampleSite : MainAPI() {
             //     ?.groupValues?.get(1)
             //     ?.replace("\\/", "/")
             //     ?: throw ErrorLoadingException("HLS URL not found")
-            val masterUrl = Regex("""file:\s*["'](https://vuvabh8vnota\.cdn-centaurus\.com/hls2/01/09302/[^"']+\.m3u8[^"']*)["']""")
-                            .find(script)
-                            ?.groupValues?.get(1)
-                            ?.replace("\\/", "/")
-                            ?: throw ErrorLoadingException("HLS URL not found")
+
+            val iframeUrl = document.selectFirst(".video-player iframe")?.attr("src")
+
+            val iframeDoc = app.get(iframeUrl).document
+
+            val extractedPack = iframeDoc
+                .selectFirst("script:containsData(function(p,a,c,k,e,d))")
+                ?.data()
+                .toString()
+                .trim()
+
+            if (extractedPack.isEmpty()) {
+                throw ErrorLoadingException("Packed JS not found")
+            }
+            println("DEBUG - Extracted packed JS: $extractedPack")
+
+            val unPacked = JsUnpacker(extractedPack).unpack() 
+                ?: throw ErrorLoadingException("Unpacking failed")
+            println("DEBUG - Unpacked JS: $unPacked")
+
+            val masterUrl = Regex("""sources:\[\{\s*file:\s*["'](https?://[^"']+\.m3u8[^"']*)["']""")
+                .find(unPacked)
+                ?.groupValues?.get(1)
+                ?: throw ErrorLoadingException("HLS URL not found in unpacked script")
 
             println("MASTER_URL: $masterUrl")
 
