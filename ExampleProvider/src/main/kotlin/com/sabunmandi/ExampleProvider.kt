@@ -123,7 +123,7 @@ class ExampleSite : MainAPI() {
             println("SCRIPT_CONTENT: $script") // Check via ADB logcat
 
             // 2. Extract JWPlayer setup configuration
-            val jwConfig = Regex("jwplayer\\(.*?\\)\\.setup\\(\\s*({.*?})\\s*\\)", RegexOption.DOT_MATCHES_ALL)
+            val jwConfig = Regex("jwplayer\\(.*?\\)\\.setup\\(\\s*(\\{.*?\\})\\s*\\)", RegexOption.DOT_MATCHES_ALL)
                 .find(script)
                 ?.groupValues?.get(1)
                 ?: throw ErrorLoadingException("JWPlayer config not found")
