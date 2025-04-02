@@ -14,17 +14,31 @@ class Avtub : MainAPI() {
     override val hasDownloadSupport = false
 
     override val mainPage = mainPageOf(
-        "$mainUrl" to "New Videos",
+        // "$mainUrl" to "New Videos",
         // "$mainUrl/popular" to "Popular",
         // "$mainUrl/random" to "Random",
         // "$mainUrl/longest/" to "Longest"
+        "$mainUrl/" to "Latest",
+        "$mainUrl/?filter=random" to "Random"
+        "$mainUrl/?filter=most-viewed" to "Most Viewed",
     )
 
     override suspend fun getMainPage(
         page: Int,
         request: MainPageRequest
     ): HomePageResponse {
-        val targetUrl = "${request.data}/page/${page}/"
+        // val targetUrl = "${request.data}/page/${page}/"
+
+        // Parse base URL and existing query parameters
+        val (basePath, queryParams) = request.data.split("?", limit = 2).let {
+            it[0] to it.getOrNull(1)
+        }
+
+        // Build paginated URL
+        val targetUrl = buildString {
+            append(if (page > 1) "$basePath/page/$page/" else basePath)
+            if (!queryParams.isNullOrEmpty()) append("?$queryParams")
+        }
         
         println("DEBUG : TARGET URL :  $targetUrl")
         
