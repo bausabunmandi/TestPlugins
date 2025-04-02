@@ -139,17 +139,6 @@ class ExampleSite : MainAPI() {
 
             println("MASTER_URL: $masterUrl")
 
-            // 4. Verify URL accessibility
-            val testRequest = app.get(
-                masterUrl,
-                headers = mapOf("Referer" to data),
-                allowRedirects = false
-            )
-            
-            if (!testRequest.isSuccessful) {
-                throw ErrorLoadingException("URL test failed: ${testRequest.statusCode}")
-            }
-
             // 5. Return the HLS stream
             callback.invoke(
                 ExtractorLink(
@@ -159,10 +148,6 @@ class ExampleSite : MainAPI() {
                     referer = data,
                     quality = Qualities.Unknown.value,
                     isM3u8 = true
-                    headers = mapOf(
-                        "Origin" to mainUrl,
-                        "User-Agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
-                    )
                 )
             )
 
