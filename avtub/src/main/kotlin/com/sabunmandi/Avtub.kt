@@ -8,10 +8,10 @@ import org.jsoup.nodes.Element
 // avtub.app
 class Avtub : MainAPI() {
     override var mainUrl = " https://avtub.men/category/bokep-indo/"
-    override var name = "Example Site"
+    override var name = "Avtub"
     override val hasMainPage = true
-    override val supportedTypes = setOf(TvType.Movie)
-    override val hasDownloadSupport = false
+    override val supportedTypes = setOf(TvType.NSFW)
+    // override val hasDownloadSupport = false
 
     override val mainPage = mainPageOf(
         "$mainUrl" to "New Videos",
