@@ -7,7 +7,7 @@ import org.jsoup.nodes.Element
 // https://avtub.men/category/bokep-indo/
 // avtub.app
 class Avtub : MainAPI() {
-    override var mainUrl = "https://avtub.men/category/bokep-indo/"
+    override var mainUrl = "https://avtub.men/category/bokep-indo"
     override var name = "Avtub"
     override val hasMainPage = true
     override val supportedTypes = setOf(TvType.Movie)
@@ -33,10 +33,12 @@ class Avtub : MainAPI() {
         val items = document.select(".site-main article").mapNotNull { article ->
             println("DEBUGXXXXXXXXX :  $article")
             // Your existing item parsing logic
-            val content = article.selectFirst(".featured-content-image") ?: return@mapNotNull null
+            // val content = article.selectFirst(".featured-content-image") ?: return@mapNotNull null
             val href = article.selectFirst("a")?.attr("href") ?: return@mapNotNull null
             val title = article.selectFirst(".post-thumbnail img")?.attr("alt") ?: "No Title"
             val poster = article.selectFirst(".post-thumbnail img")?.attr("src")
+
+            println("CONTENTTTTTTXXXXX :  $href")
 
             newMovieSearchResponse(title, href, TvType.Movie) {
                 this.posterUrl = poster
