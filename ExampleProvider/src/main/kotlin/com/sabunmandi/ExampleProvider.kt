@@ -126,9 +126,6 @@ class ExampleSite : MainAPI() {
                 .selectFirst("script:containsData(sources)")
                 ?.html()
             
-            if (extractedPack.isEmpty()) {
-                throw ErrorLoadingException("Packed JS not found")
-            }
             println("DEBUG - Extracted packed JS: $extractedPack")
             
             // 4. Unpack the JavaScript using the CloudStream JsUnpacker utility.
