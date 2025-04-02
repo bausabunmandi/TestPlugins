@@ -116,15 +116,16 @@ class ExampleSite : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         try {
+            println("===========================")
+
             // 1. Load the main document and extract the iframe URL.
             val mainDoc = app.get(data).document
             
             // 3. Extract the packed JS snippet using the common packer pattern.
             val extractedPack = mainDoc
-                .selectFirst("script:containsData(function(p,a,c,k,e,d))")
-                ?.data()
-                .toString()
-                .trim()
+                .selectFirst("script:containsData(sources)")
+                ?.html()
+            
             if (extractedPack.isEmpty()) {
                 throw ErrorLoadingException("Packed JS not found")
             }
