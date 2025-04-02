@@ -151,14 +151,7 @@ class ExampleSite : MainAPI() {
                 ?.groupValues?.get(1)
                 ?: throw ErrorLoadingException("HLS URL not found in unpacked script")
             println("DEBUG - MASTER_URL: $masterUrl")
-            
-            // 6. Optionally verify the URL by checking the response status.
-            val testResponse = app.get(masterUrl, allowRedirects = false)
-            println("DEBUG - URL Test Response: ${testResponse.statusCode}")
-            if (testResponse.statusCode != 200) {
-                println("DEBUG - URL Verification Failed!")
-                return false
-            }
+
             
             // 7. Return the extracted link via the callback.
             callback.invoke(
