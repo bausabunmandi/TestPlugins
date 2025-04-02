@@ -238,7 +238,7 @@ class Avtub : MainAPI() {
         val doc = app.get(url, referer = mainUrl).document
         
         // Check for direct video source first
-        doc.selectFirst("video source")?.attr("src")?.fixUrl()?.let {
+        doc.selectFirst("video")?.attr("src")?.fixUrl()?.let {
             return it
         }
         
