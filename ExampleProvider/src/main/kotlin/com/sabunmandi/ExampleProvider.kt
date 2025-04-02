@@ -134,7 +134,7 @@ class ExampleSite : MainAPI() {
                 // ?: throw ErrorLoadingException("Missing stream parameters")
 
             // val masterUrl = "https://vuvabh8vnota.cdn-centaurus.com/hls2/01/09302/${videoId}_n/master.m3u8?$queryParams"
-
+            val iframeDoc = app.get(iframeUrl).document
             val scriptContent = iframeDoc.select("script:containsData(sources)").html()
             println("DEBUG - JWPlayer Script Content: $scriptContent")
 
