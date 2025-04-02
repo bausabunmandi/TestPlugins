@@ -123,19 +123,28 @@ class ExampleSite : MainAPI() {
             val videoId = iframeUrl.substringAfterLast("/e/").substringBefore("?").trim()
             
             // 2. Construct the master playlist URL with all parameters
-            val scriptContent = document.select("script:containsData(master.m3u8)").html()
-            val queryParams = Regex("""master\.m3u8\?(.*?)['"]""").find(scriptContent)?.groupValues?.get(1)
+            // val scriptContent = document.select("script:containsData(master.m3u8)").html()
+            // val queryParams = Regex("""master\.m3u8\?(.*?)['"]""").find(scriptContent)?.groupValues?.get(1)
             
-            app.postNotification("Raw params: ${queryParams ?: "NULL"}")
-            println("DEBUG - Raw params: ${queryParams ?: "NULL"}")
+            // app.postNotification("Raw params: ${queryParams ?: "NULL"}")
+            // println("DEBUG - Raw params: ${queryParams ?: "NULL"}")
 
-            val scriptContent = document.select("script:containsData(master.m3u8)").html()
-            val queryParams = Regex("""master\.m3u8\?(.*?)['"]""").find(scriptContent)?.groupValues?.get(1)
-                ?: throw ErrorLoadingException("Missing stream parameters")
+            // val scriptContent = document.select("script:containsData(master.m3u8)").html()
+            // val queryParams = Regex("""master\.m3u8\?(.*?)['"]""").find(scriptContent)?.groupValues?.get(1)
+                // ?: throw ErrorLoadingException("Missing stream parameters")
 
-            val masterUrl = "https://vuvabh8vnota.cdn-centaurus.com/hls2/01/09302/${videoId}_n/master.m3u8?$queryParams"
+            // val masterUrl = "https://vuvabh8vnota.cdn-centaurus.com/hls2/01/09302/${videoId}_n/master.m3u8?$queryParams"
+
+            val scriptContent = iframeDoc.select("script:containsData(sources)").html()
+            println("DEBUG - JWPlayer Script Content: $scriptContent")
+
+            val masterUrl = Regex("""file:"(https://vuvabh8vnota\.cdn-centaurus\.com/hls2/01/09302/[^"]+)""")
+                .find(scriptContent)?.groupValues?.get(1)
+            // app.postNotification("Extracted file URL: ${fileUrl ?: "NULL"}")
+            // println("DEBUG - Extracted file URL: ${fileUrl ?: "NULL"}")
+
             app.postNotification("Master URL: $masterUrl")
-        println("DEBUG - Master URL: $masterUrl")
+            println("DEBUG - Master URL: $masterUrl")
             // 3. Create the extractor link
             callback.invoke(
                 ExtractorLink(
