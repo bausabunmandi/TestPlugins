@@ -18,8 +18,8 @@ class Avtub : MainAPI() {
         // "$mainUrl/popular" to "Popular",
         // "$mainUrl/random" to "Random",
         // "$mainUrl/longest/" to "Longest"
-        "$mainUrl/" to "Latest",
-        "$mainUrl/?filter=random" to "Random",
+        "$mainUrl/?filter=latest" to "Latest",
+        // "$mainUrl/?filter=random" to "Random",
         "$mainUrl/?filter=most-viewed" to "Most Viewed",
     )
 
@@ -45,14 +45,14 @@ class Avtub : MainAPI() {
         val document = app.get(targetUrl).document
         
         val items = document.select(".site-main article").mapNotNull { article ->
-            println("DEBUGXXXXXXXXX :  $article")
+            // println("DEBUGXXXXXXXXX :  $article")
             // Your existing item parsing logic
             // val content = article.selectFirst(".featured-content-image") ?: return@mapNotNull null
             val href = article.selectFirst("a")?.attr("href") ?: return@mapNotNull null
             val title = article.selectFirst(".post-thumbnail img")?.attr("alt") ?: "No Title"
             val poster = article.selectFirst(".post-thumbnail img")?.attr("data-src")
 
-            println("CONTENTTTTTTXXXXX :  $href")
+            // println("CONTENTTTTTTXXXXX :  $href")
 
             newMovieSearchResponse(title, href, TvType.Movie) {
                 this.posterUrl = poster
