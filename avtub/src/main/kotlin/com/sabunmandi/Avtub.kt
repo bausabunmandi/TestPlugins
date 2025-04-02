@@ -148,8 +148,8 @@ class Avtub : MainAPI() {
         // val videoUrl = document.selectFirst(".video-player iframe")?.attr("src")?.trim() ?: ""
         val initialIframeUrl = document.selectFirst(".video-player iframe")?.attr("src")?.fixUrl()
         ?: throw ErrorLoadingException("No video iframe found")
-        val videoUrl = initialIframeUrl
-        // val videoUrl = resolveNestedIframe(initialIframeUrl)
+        // val videoUrl = initialIframeUrl
+        val videoUrl = resolveNestedIframe(initialIframeUrl)
 
         return newMovieLoadResponse(
             name = title,
