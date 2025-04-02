@@ -92,11 +92,10 @@ class ExampleSite : MainAPI() {
             ?.trim()
     
         // Extract video URL (from previous implementation)
-        val videoUrl = document.selectFirst(".video-player iframe")?.attr("src")?.trim()
-        if (videoUrl.isNullOrEmpty()) {
-            println("DEBUG - No data video URL found! : $url | $videoUrl")
-            videoUrl = ""
-        }
+        val videoUrl = document.selectFirst(".video-player iframe")?.attr("src")?.trim() ?: ""
+        // if (videoUrl.isNullOrEmpty()) {
+        //     println("DEBUG - No data video URL found! : $url | $videoUrl")
+        // }
         // val videoUrl = document.selectFirst("video source")?.attr("src")?.trim()
         // ?: document.selectFirst("iframe")?.attr("src")?.trim()
         // ?: throw ErrorLoadingException("No video found")
