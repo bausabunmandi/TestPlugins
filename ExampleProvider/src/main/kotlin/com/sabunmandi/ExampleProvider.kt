@@ -144,7 +144,7 @@ class ExampleSite : MainAPI() {
             // app.postNotification("Extracted file URL: ${fileUrl ?: "NULL"}")
             // println("DEBUG - Extracted file URL: ${fileUrl ?: "NULL"}")
 
-            Log.d("Pain", masterUrl)
+            // Log.d("Pain", masterUrl)
             println("DEBUG - Master URL: $masterUrl")
             // 3. Create the extractor link
             callback.invoke(
