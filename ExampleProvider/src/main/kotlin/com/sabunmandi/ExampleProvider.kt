@@ -15,16 +15,24 @@ class ExampleSite : MainAPI() {
     override val supportedTypes = setOf(TvType.Movie)
     override val hasDownloadSupport = false
 
-    // =========================== Main Page ===========================
+    override val mainPage = mainPageOf(
+        "$mainUrl/" to "New Videos",
+        "$mainUrl/popular/" to "Popular",
+        "$mainUrl/random/" to "Random",
+        "$mainUrl/longest/" to "Longest"
+    )
+
     override suspend fun getMainPage(
         page: Int,
         request: MainPageRequest
     ): HomePageResponse {
-        val targetUrl = if (page == 1) mainUrl else "$mainUrl/page/$page/"
+        val baseUrl = request.data // Gets the URL from mainPageOf pairs
+        val targetUrl = if (page == 1) baseUrl else "$baseUrl/page/$page/"
         
         val document = app.get(targetUrl).document
         
         val items = document.select(".post-list .video-item").mapNotNull { item ->
+            // Your existing item parsing logic
             val content = item.selectFirst(".featured-content-image") ?: return@mapNotNull null
             val href = content.selectFirst("a")?.attr("href") ?: return@mapNotNull null
             val title = content.selectFirst("img")?.attr("alt") ?: "No Title"
@@ -35,15 +43,11 @@ class ExampleSite : MainAPI() {
             }
         }
 
-        // Improved pagination detection
-        val hasNext = document.select("ul.pagination").let { pagination ->
-            pagination?.last()?.select("li:last-child a:contains(Next)")?.firstOrNull()?.let {
-                it.text().equals("Next", ignoreCase = true) && it.attr("href").contains("/page/")
-            } ?: false
-        }
+        // Pagination detection (same for all categories)
+        val hasNext = document.selectFirst("ul.pagination li:last-child a:contains(Next)") != null
 
         return newHomePageResponse(
-            listOf(HomePageList("Latest Videos", items)),
+            listOf(HomePageList(request.name, items)),
             hasNext = hasNext
         )
     }
