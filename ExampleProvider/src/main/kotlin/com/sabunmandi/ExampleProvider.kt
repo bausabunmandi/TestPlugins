@@ -65,32 +65,38 @@ class ExampleSite : MainAPI() {
     override suspend fun load(url: String): LoadResponse {
         val document = app.get(url).document
         
-        val title = document.selectFirst("h1.title")?.text()?.trim() ?: "No Title"
-        val poster = document.selectFirst(".featured-image img")?.attr("src")?.trim()
-        val description = document.selectFirst(".description")?.text()?.trim()
-        
-        val videoUrl = document.selectFirst("video source")?.attr("src")?.trim()
-            ?: document.selectFirst("iframe")?.attr("src")?.trim()
-            ?: throw ErrorLoadingException("No video found")
-
+        // Extract metadata from video-player div
+        val videoPlayer = document.selectFirst(".video-player") 
+            ?: throw ErrorLoadingException("Video player not found")
+    
+        // Get title from itemprop="name"
+        val title = videoPlayer.select("meta[itemprop=name]")
+            .attr("content")
+            .trim()
+            .ifEmpty { document.selectFirst("h1.title")?.text()?.trim() }
+            ?: "No Title"
+    
+        // Get poster from itemprop="thumbnailUrl"
+        val poster = videoPlayer.select("meta[itemprop=thumbnailUrl]")
+            .attr("content")
+            .trim()
+            .ifEmpty { document.selectFirst(".featured-image img")?.attr("src")?.trim() }
+    
+        // Get description (example additional field)
+        val description = document.selectFirst("meta[property='og:description']")
+            ?.attr("content")
+            ?.trim()
+    
         return newMovieLoadResponse(
-            name = title,
-            url = url,
-            type = TvType.Movie,
-            dataUrl = videoUrl,
+            title, 
+            url, 
+            TvType.Movie
         ) {
             this.posterUrl = poster
             this.plot = description
-            // this.apiName = this@ExampleSitePlugin.name
-            // this.contentRating = ContentRating.Unknown // Update if site provides rating info
-            // Add other fields if available:
-            // year = 2023
-            // duration = 120
-            // rating = 8
         }
     }
 
-    // Add this to your plugin class
     override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
@@ -100,17 +106,49 @@ class ExampleSite : MainAPI() {
         try {
             val document = app.get(data).document
             
-            // 1. Find StreamHG iframe
-            val iframeSrc = document.select(".video-player iframe").attr("src")
-
-            // 2. Process StreamHG URL
-            // resolveStreamHG(iframeSrc, callback)
-            loadExtractor(iframeSrc, subtitleCallback, callback)
+            val iframeUrl = document.selectFirst(".video-player iframe")
+                ?.attr("src")
+                ?.replace("https://cybervynx.com/e/", "https://vuvabh8vnota.cdn-centaurus.com/hls2/01/09302/")
+                ?.let { "$it/index.m3u8" }
+                ?: return false
+    
+            callback.invoke(
+                ExtractorLink(
+                    source = name,
+                    name = "Direct Stream",  // Single display name
+                    url = iframeUrl,
+                    referer = "https://cybervynx.com/",
+                    isM3u8 = true
+                )
+            )
+    
             return true
         } catch (e: Exception) {
             return false
         }
     }
+
+    // Add this to your plugin class
+    // override suspend fun loadLinks(
+    //     data: String,
+    //     isCasting: Boolean,
+    //     subtitleCallback: (SubtitleFile) -> Unit,
+    //     callback: (ExtractorLink) -> Unit
+    // ): Boolean {
+    //     try {
+    //         val document = app.get(data).document
+            
+    //         // 1. Find StreamHG iframe
+    //         val iframeSrc = document.select(".video-player iframe").attr("src")
+
+    //         // 2. Process StreamHG URL
+    //         // resolveStreamHG(iframeSrc, callback)
+    //         loadExtractor(iframeSrc, subtitleCallback, callback)
+    //         return true
+    //     } catch (e: Exception) {
+    //         return false
+    //     }
+    // }
 
     // private suspend fun resolveStreamHG(url: String, callback: (ExtractorLink) -> Unit) {
     //     val response = app.get(url, referer = mainUrl)
