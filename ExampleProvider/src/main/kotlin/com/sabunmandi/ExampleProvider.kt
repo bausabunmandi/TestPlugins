@@ -102,7 +102,7 @@ class ExampleSite : MainAPI() {
             name = title,
             url = url,
             type = TvType.Movie,
-            dataUrl = url,
+            dataUrl = videoUrl,
         ) {
             this.posterUrl = poster
             this.plot = description
@@ -120,6 +120,8 @@ class ExampleSite : MainAPI() {
 
             // 1. Load the main document and extract the iframe URL.
             val mainDoc = app.get(data).document
+
+            println("DEBUG : $data")
             
             // 3. Extract the packed JS snippet using the common packer pattern.
             val extractedPack = mainDoc
