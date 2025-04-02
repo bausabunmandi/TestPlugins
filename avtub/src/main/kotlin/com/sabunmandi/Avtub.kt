@@ -64,9 +64,12 @@ class Avtub : MainAPI() {
         //     } ?: false
         // }
 
-        val hasNext = document.select("ul.pagination li").let { items ->
-            items.lastOrNull()?.select("a:contains(Next)")?.isNotEmpty() == true ||
-            items[items.lastIndex - 1]?.select("a:contains(Next)")?.isNotEmpty() == true
+        val hasNext = document.select("ul.pagination").any { pagination ->
+            pagination.select("a").any { link ->
+                link.text().equals("Next", ignoreCase = true) &&
+                !link.hasClass("disabled") &&
+                link.attr("href").contains("page")
+            }
         }
 
         println("DEBUG : HAS NEXT :  $hasNext")
