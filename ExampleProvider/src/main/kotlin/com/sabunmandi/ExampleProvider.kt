@@ -4,9 +4,6 @@ import android.util.Log
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
 import org.jsoup.nodes.Element
-import com.lagradost.cloudstream3.utils.Qualities
-import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.ExtractorLinkType
 
 class ExampleSite : MainAPI() {
     override var mainUrl = "https://igodesu.tv"
@@ -17,8 +14,8 @@ class ExampleSite : MainAPI() {
 
     override val mainPage = mainPageOf(
         "$mainUrl/" to "New Videos",
-        "$mainUrl/popular/" to "Popular",
-        "$mainUrl/random/" to "Random",
+        "$mainUrl/popular" to "Popular",
+        "$mainUrl/random" to "Random",
         "$mainUrl/longest/" to "Longest"
     )
 
