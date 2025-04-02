@@ -148,7 +148,8 @@ class Avtub : MainAPI() {
         // val videoUrl = document.selectFirst(".video-player iframe")?.attr("src")?.trim() ?: ""
         val initialIframeUrl = document.selectFirst(".video-player iframe")?.attr("src")?.fixUrl()
         ?: throw ErrorLoadingException("No video iframe found")
-        val videoUrl = resolveNestedIframe(initialIframeUrl)
+        val videoUrl = initialIframeUrl
+        // val videoUrl = resolveNestedIframe(initialIframeUrl)
 
         return newMovieLoadResponse(
             name = title,
@@ -234,21 +235,28 @@ class Avtub : MainAPI() {
     private suspend fun resolveNestedIframe(url: String, depth: Int = 3): String {
         println("Resolving iframe (depth ${4 - depth}): $url")
         if (depth <= 0) throw ErrorLoadingException("Maximum iframe depth reached")
-        
+
         val doc = app.get(url, referer = mainUrl).document
-        val t = doc.selectFirst("video")?.attr("src")
-        println("document debug : $t")
         
-        // Check for direct video source first
-        doc.selectFirst("video")?.attr("src")?.fixUrl()?.let {
-            return it
-        }
-        
-        // Check for nested iframe
         val newUrl = doc.selectFirst("iframe")?.attr("src")?.fixUrl()
-            ?: throw ErrorLoadingException("No video source found")
+        if(!newUrl.isNullOrEmpty()) {
+            return resolveNestedIframe(newUrl, depth - 1)
+        }
+
+        return url
+
+        // val t = doc.selectFirst("video")?.attr("src")
+        // println("document debug : $t")
         
-        return resolveNestedIframe(newUrl, depth - 1)
+        // // Check for direct video source first
+        // doc.selectFirst("video")?.attr("src")?.fixUrl()?.let {
+        //     return it
+        // }
+        
+        // // Check for nested iframe
+        // val newUrl = doc.selectFirst("iframe")?.attr("src")?.fixUrl()
+        //     ?: throw ErrorLoadingException("No video source found")
+        
     }
     
     
