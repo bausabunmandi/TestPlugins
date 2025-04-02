@@ -64,7 +64,7 @@ class Avtub : MainAPI() {
         //     } ?: false
         // }
 
-        val hasNext = document.select("ul.pagination").any { pagination ->
+        val hasNext = document.select(".pagination ul").any { pagination ->
             pagination.select("a").any { link ->
                 link.text().equals("Next", ignoreCase = true) &&
                 !link.hasClass("disabled") &&
