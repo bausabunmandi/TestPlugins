@@ -116,72 +116,146 @@ class ExampleSite : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         try {
-            val document = app.get(data).document
+            // 1. Load the main document and extract the iframe URL.
+            val mainDoc = app.get(data).document
+            val iframeUrl = mainDoc.selectFirst(".video-player iframe")?.attr("src")
+            println("DEBUG - Iframe URL: $iframeUrl")
+            if (iframeUrl == null) {
+                println("DEBUG - No iframe found!")
+                return false
+            }
             
-            // 1. Find JWPlayer script
-            val script = document.select("script:containsData(sources)").toString()
-            println("SCRIPT_CONTENT: $script") // Check via ADB logcat
-
-            // // 2. Extract JWPlayer setup configuration
-            // val jwConfig = Regex("jwplayer\\(.*?\\)\\.setup\\(\\s*(\\{.*?\\})\\s*\\)", RegexOption.DOT_MATCHES_ALL)
-            //     .find(script)
-            //     ?.groupValues?.get(1)
-            //     ?: throw ErrorLoadingException("JWPlayer config not found")
-
-            // println("JW_CONFIG: $jwConfig")
-
-            // // 3. Extract HLS master URL
-            // val masterUrl = Regex("""file:\s*["'](.*?\.m3u8[^"']*)["']""")
-            //     .find(jwConfig)
-            //     ?.groupValues?.get(1)
-            //     ?.replace("\\/", "/")
-            //     ?: throw ErrorLoadingException("HLS URL not found")
-
-            val iframeUrl = document.selectFirst(".video-player iframe")?.attr("src")
-
+            // 2. Load the iframe document which contains the packed JWPlayer script.
             val iframeDoc = app.get(iframeUrl).document
-
+            
+            // 3. Extract the packed JS snippet using the common packer pattern.
             val extractedPack = iframeDoc
                 .selectFirst("script:containsData(function(p,a,c,k,e,d))")
                 ?.data()
                 .toString()
                 .trim()
-
             if (extractedPack.isEmpty()) {
                 throw ErrorLoadingException("Packed JS not found")
             }
             println("DEBUG - Extracted packed JS: $extractedPack")
-
+            
+            // 4. Unpack the JavaScript using the CloudStream JsUnpacker utility.
             val unPacked = JsUnpacker(extractedPack).unpack() 
                 ?: throw ErrorLoadingException("Unpacking failed")
             println("DEBUG - Unpacked JS: $unPacked")
-
-            val masterUrl = Regex("""sources:\[\{\s*file:\s*["'](https?://[^"']+\.m3u8[^"']*)["']""")
+            
+            // 5. Extract the HLS master URL dynamically from the unpacked script.
+            // This regex will match any URL starting with http or https that ends with .m3u8 and includes any query parameters.
+            val masterUrl: String = Regex("""sources:\[\{\s*file:\s*["'](https?://[^"']+\.m3u8[^"']*)["']""")
                 .find(unPacked)
                 ?.groupValues?.get(1)
                 ?: throw ErrorLoadingException("HLS URL not found in unpacked script")
-
-            println("MASTER_URL: $masterUrl")
-
-            // 5. Return the HLS stream
+            println("DEBUG - MASTER_URL: $masterUrl")
+            
+            // 6. Optionally verify the URL by checking the response status.
+            val testResponse = app.get(masterUrl, allowRedirects = false)
+            println("DEBUG - URL Test Response: ${testResponse.statusCode}")
+            if (testResponse.statusCode != 200) {
+                println("DEBUG - URL Verification Failed!")
+                return false
+            }
+            
+            // 7. Return the extracted link via the callback.
             callback.invoke(
                 ExtractorLink(
                     source = name,
-                    name = "JWPlayer Stream",
+                    name = "CDN Stream",
                     url = masterUrl,
-                    referer = data,
+                    referer = "https://cybervynx.com/",
                     quality = Qualities.Unknown.value,
                     isM3u8 = true
                 )
             )
-
+            
             return true
-
+    
         } catch (e: Exception) {
-            println("LOAD_LINKS_ERROR: ${e.stackTraceToString()}")
+            println("ERROR - ${e.javaClass.simpleName}")
+            println("ERROR - Message: ${e.message?.take(50)}")
+            println("ERROR - ${e.stackTraceToString()}")
             return false
         }
     }
+    
+
+    // override suspend fun loadLinks(
+    //     data: String,
+    //     isCasting: Boolean,
+    //     subtitleCallback: (SubtitleFile) -> Unit,
+    //     callback: (ExtractorLink) -> Unit
+    // ): Boolean {
+    //     try {
+    //         val document = app.get(data).document
+            
+    //         // 1. Find JWPlayer script
+    //         val script = document.select("script:containsData(sources)").toString()
+    //         println("SCRIPT_CONTENT: $script") // Check via ADB logcat
+
+    //         // // 2. Extract JWPlayer setup configuration
+    //         // val jwConfig = Regex("jwplayer\\(.*?\\)\\.setup\\(\\s*(\\{.*?\\})\\s*\\)", RegexOption.DOT_MATCHES_ALL)
+    //         //     .find(script)
+    //         //     ?.groupValues?.get(1)
+    //         //     ?: throw ErrorLoadingException("JWPlayer config not found")
+
+    //         // println("JW_CONFIG: $jwConfig")
+
+    //         // // 3. Extract HLS master URL
+    //         // val masterUrl = Regex("""file:\s*["'](.*?\.m3u8[^"']*)["']""")
+    //         //     .find(jwConfig)
+    //         //     ?.groupValues?.get(1)
+    //         //     ?.replace("\\/", "/")
+    //         //     ?: throw ErrorLoadingException("HLS URL not found")
+
+    //         val iframeUrl = document.selectFirst(".video-player iframe")?.attr("src") 
+
+    //         val iframeDoc = app.get(iframeUrl).document
+
+    //         val extractedPack = iframeDoc
+    //             .selectFirst("script:containsData(function(p,a,c,k,e,d))")
+    //             ?.data()
+    //             .toString()
+    //             .trim()
+
+    //         if (extractedPack.isEmpty()) {
+    //             throw ErrorLoadingException("Packed JS not found")
+    //         }
+    //         println("DEBUG - Extracted packed JS: $extractedPack")
+
+    //         val unPacked = JsUnpacker(extractedPack).unpack() 
+    //             ?: throw ErrorLoadingException("Unpacking failed")
+    //         println("DEBUG - Unpacked JS: $unPacked")
+
+    //         val masterUrl = Regex("""sources:\[\{\s*file:\s*["'](https?://[^"']+\.m3u8[^"']*)["']""")
+    //             .find(unPacked)
+    //             ?.groupValues?.get(1)
+    //             ?: throw ErrorLoadingException("HLS URL not found in unpacked script")
+
+    //         println("MASTER_URL: $masterUrl")
+
+    //         // 5. Return the HLS stream
+    //         callback.invoke(
+    //             ExtractorLink(
+    //                 source = name,
+    //                 name = "JWPlayer Stream",
+    //                 url = masterUrl,
+    //                 referer = data,
+    //                 quality = Qualities.Unknown.value,
+    //                 isM3u8 = true
+    //             )
+    //         )
+
+    //         return true
+
+    //     } catch (e: Exception) {
+    //         println("LOAD_LINKS_ERROR: ${e.stackTraceToString()}")
+    //         return false
+    //     }
+    // }
 
     // override suspend fun loadLinks(
     //     data: String,
