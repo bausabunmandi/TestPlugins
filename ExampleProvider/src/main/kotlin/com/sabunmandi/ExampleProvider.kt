@@ -125,10 +125,17 @@ class ExampleSite : MainAPI() {
             // 2. Construct the master playlist URL with all parameters
             val scriptContent = document.select("script:containsData(master.m3u8)").html()
             val queryParams = Regex("""master\.m3u8\?(.*?)['"]""").find(scriptContent)?.groupValues?.get(1)
+            
+            app.postNotification("Raw params: ${queryParams ?: "NULL"}")
+            println("DEBUG - Raw params: ${queryParams ?: "NULL"}")
+
+            val scriptContent = document.select("script:containsData(master.m3u8)").html()
+            val queryParams = Regex("""master\.m3u8\?(.*?)['"]""").find(scriptContent)?.groupValues?.get(1)
                 ?: throw ErrorLoadingException("Missing stream parameters")
 
             val masterUrl = "https://vuvabh8vnota.cdn-centaurus.com/hls2/01/09302/${videoId}_n/master.m3u8?$queryParams"
-
+            app.postNotification("Master URL: $masterUrl")
+        println("DEBUG - Master URL: $masterUrl")
             // 3. Create the extractor link
             callback.invoke(
                 ExtractorLink(
