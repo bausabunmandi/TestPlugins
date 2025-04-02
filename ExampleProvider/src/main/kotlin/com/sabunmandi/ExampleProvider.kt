@@ -118,51 +118,116 @@ class ExampleSite : MainAPI() {
         try {
             val document = app.get(data).document
             
-            // 1. Extract the iframe source and video ID
-            val iframeUrl = document.selectFirst(".video-player iframe")?.attr("src") 
-                ?: return false
-            val videoId = iframeUrl.substringAfterLast("/e/").substringBefore("?").trim()
+            // 1. Find JWPlayer script
+            val script = document.select("script:containsData(jwplayer)").html()
+            println("SCRIPT_CONTENT: $script") // Check via ADB logcat
+
+            // 2. Extract JWPlayer setup configuration
+            val jwConfig = Regex("jwplayer\\(.*?\\)\\.setup\\(\\s*({.*?})\\s*\\)", RegexOption.DOT_MATCHES_ALL)
+                .find(script)
+                ?.groupValues?.get(1)
+                ?: throw ErrorLoadingException("JWPlayer config not found")
+
+            println("JW_CONFIG: $jwConfig")
+
+            // 3. Extract HLS master URL
+            val masterUrl = Regex("""file:\s*["'](.*?\.m3u8[^"']*)["']""")
+                .find(jwConfig)
+                ?.groupValues?.get(1)
+                ?.replace("\\/", "/")
+                ?: throw ErrorLoadingException("HLS URL not found")
+
+            println("MASTER_URL: $masterUrl")
+
+            // 4. Verify URL accessibility
+            val testRequest = app.get(
+                masterUrl,
+                headers = mapOf("Referer" to data),
+                allowRedirects = false
+            )
             
-            // 2. Construct the master playlist URL with all parameters
-            // val scriptContent = document.select("script:containsData(master.m3u8)").html()
-            // val queryParams = Regex("""master\.m3u8\?(.*?)['"]""").find(scriptContent)?.groupValues?.get(1)
-            
-            // app.postNotification("Raw params: ${queryParams ?: "NULL"}")
-            // println("DEBUG - Raw params: ${queryParams ?: "NULL"}")
+            if (!testRequest.isSuccessful) {
+                throw ErrorLoadingException("URL test failed: ${testRequest.statusCode}")
+            }
 
-            // val scriptContent = document.select("script:containsData(master.m3u8)").html()
-            // val queryParams = Regex("""master\.m3u8\?(.*?)['"]""").find(scriptContent)?.groupValues?.get(1)
-                // ?: throw ErrorLoadingException("Missing stream parameters")
-
-            // val masterUrl = "https://vuvabh8vnota.cdn-centaurus.com/hls2/01/09302/${videoId}_n/master.m3u8?$queryParams"
-            val iframeDoc = app.get(iframeUrl).document
-            val scriptContent = iframeDoc.select("script:containsData(sources)").html()
-            println("DEBUG - JWPlayer Script Content: $scriptContent")
-
-            val masterUrl = Regex("""file:"(https://vuvabh8vnota\.cdn-centaurus\.com/hls2/01/09302/[^"]+)""")
-                .find(scriptContent)?.groupValues?.get(1)
-            // app.postNotification("Extracted file URL: ${fileUrl ?: "NULL"}")
-            // println("DEBUG - Extracted file URL: ${fileUrl ?: "NULL"}")
-
-            // Log.d("Pain", masterUrl)
-            println("DEBUG - Master URL: $masterUrl")
-            // 3. Create the extractor link
+            // 5. Return the HLS stream
             callback.invoke(
                 ExtractorLink(
                     source = name,
-                    name = "CDN-Centaurus Stream",
+                    name = "JWPlayer Stream",
                     url = masterUrl,
-                    referer = "https://cybervynx.com/",
+                    referer = data,
                     quality = Qualities.Unknown.value,
                     isM3u8 = true
+                    headers = mapOf(
+                        "Origin" to mainUrl,
+                        "User-Agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+                    )
                 )
             )
 
             return true
+
         } catch (e: Exception) {
+            println("LOAD_LINKS_ERROR: ${e.stackTraceToString()}")
             return false
         }
     }
+
+    // override suspend fun loadLinks(
+    //     data: String,
+    //     isCasting: Boolean,
+    //     subtitleCallback: (SubtitleFile) -> Unit,
+    //     callback: (ExtractorLink) -> Unit
+    // ): Boolean {
+    //     try {
+    //         val document = app.get(data).document
+            
+    //         // 1. Extract the iframe source and video ID
+    //         val iframeUrl = document.selectFirst(".video-player iframe")?.attr("src") 
+    //             ?: return false
+    //         val videoId = iframeUrl.substringAfterLast("/e/").substringBefore("?").trim()
+            
+    //         // 2. Construct the master playlist URL with all parameters
+    //         // val scriptContent = document.select("script:containsData(master.m3u8)").html()
+    //         // val queryParams = Regex("""master\.m3u8\?(.*?)['"]""").find(scriptContent)?.groupValues?.get(1)
+            
+    //         // app.postNotification("Raw params: ${queryParams ?: "NULL"}")
+    //         // println("DEBUG - Raw params: ${queryParams ?: "NULL"}")
+
+    //         // val scriptContent = document.select("script:containsData(master.m3u8)").html()
+    //         // val queryParams = Regex("""master\.m3u8\?(.*?)['"]""").find(scriptContent)?.groupValues?.get(1)
+    //             // ?: throw ErrorLoadingException("Missing stream parameters")
+
+    //         // val masterUrl = "https://vuvabh8vnota.cdn-centaurus.com/hls2/01/09302/${videoId}_n/master.m3u8?$queryParams"
+    //         val iframeDoc = app.get(iframeUrl).document
+    //         val scriptContent = iframeDoc.select("script:containsData(sources)").html()
+    //         println("DEBUG - JWPlayer Script Content: $scriptContent")
+
+    //         val masterUrl = Regex("""file:"(https://vuvabh8vnota\.cdn-centaurus\.com/hls2/01/09302/[^"]+)""")
+    //             .find(scriptContent)?.groupValues?.get(1)
+    //         // app.postNotification("Extracted file URL: ${fileUrl ?: "NULL"}")
+    //         // println("DEBUG - Extracted file URL: ${fileUrl ?: "NULL"}")
+
+    //         // Log.d("Pain", masterUrl)
+    //         println("DEBUG - Master URL: $masterUrl")
+    //         // 3. Create the extractor link
+    //         callback.invoke(
+    //             ExtractorLink(
+    //                 source = name,
+    //                 name = "CDN-Centaurus Stream",
+    //                 url = masterUrl,
+    //                 referer = "https://cybervynx.com/",
+    //                 quality = Qualities.Unknown.value,
+    //                 isM3u8 = true
+    //             )
+    //         )
+
+    //         return true
+    //     } catch (e: Exception) {
+    //         return false
+    //     }
+    // }
 
     // Add this to your plugin class
     // override suspend fun loadLinks(
