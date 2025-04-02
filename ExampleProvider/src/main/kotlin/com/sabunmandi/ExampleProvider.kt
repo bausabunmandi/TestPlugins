@@ -118,18 +118,9 @@ class ExampleSite : MainAPI() {
         try {
             // 1. Load the main document and extract the iframe URL.
             val mainDoc = app.get(data).document
-            val iframeUrl = mainDoc.selectFirst(".video-player iframe")?.attr("src")
-            println("DEBUG - Iframe URL: $iframeUrl")
-            if (iframeUrl == null) {
-                println("DEBUG - No iframe found! : $data")
-                return false
-            }
-            
-            // 2. Load the iframe document which contains the packed JWPlayer script.
-            val iframeDoc = app.get(iframeUrl).document
             
             // 3. Extract the packed JS snippet using the common packer pattern.
-            val extractedPack = iframeDoc
+            val extractedPack = mainDoc
                 .selectFirst("script:containsData(function(p,a,c,k,e,d))")
                 ?.data()
                 .toString()
