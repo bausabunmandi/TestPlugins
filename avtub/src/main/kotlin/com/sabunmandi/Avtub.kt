@@ -236,6 +236,8 @@ class Avtub : MainAPI() {
         if (depth <= 0) throw ErrorLoadingException("Maximum iframe depth reached")
         
         val doc = app.get(url, referer = mainUrl).document
+        val t = doc.selectFirst("video")?.attr("src")
+        println("document debug : $t")
         
         // Check for direct video source first
         doc.selectFirst("video")?.attr("src")?.fixUrl()?.let {
