@@ -11,7 +11,7 @@ class Avtub : MainAPI() {
     override var name = "Avtub"
     override val hasMainPage = true
     override val supportedTypes = setOf(TvType.Movie)
-    override val hasDownloadSupport = false
+    // override val hasDownloadSupport = false
 
     override val mainPage = mainPageOf(
         "$mainUrl/category/bokep-indo/?filter=latest" to "Latest",
@@ -38,7 +38,7 @@ class Avtub : MainAPI() {
             if (!queryParams.isNullOrEmpty()) append("?$queryParams")
         }
         
-        println("DEBUG : TARGET URL :  $targetUrl")
+        println("DEBUG : TARGET URL :  $targetUrl : PAGE : $page")
         
         val document = app.get(targetUrl).document
         
@@ -58,11 +58,18 @@ class Avtub : MainAPI() {
         }
 
         // Pagination detection (same for all categories)
-        val hasNext = document.select("ul.pagination").let { pagination ->
-            pagination?.last()?.select("li:nth-last-child(2) a:contains(Next)")?.firstOrNull()?.let {
-                it.text().equals("Next", ignoreCase = true) && it.attr("href").contains("/page/")
-            } ?: false
+        // val hasNext = document.select("ul.pagination").let { pagination ->
+        //     pagination?.last()?.select("li:nth-last-child(2) a:contains(Next)")?.firstOrNull()?.let {
+        //         it.text().equals("Next", ignoreCase = true) && it.attr("href").contains("/page/")
+        //     } ?: false
+        // }
+
+        val hasNext = document.select("ul.pagination li").let { items ->
+            items.lastOrNull()?.select("a:contains(Next)")?.isNotEmpty() == true ||
+            items[items.lastIndex - 1]?.select("a:contains(Next)")?.isNotEmpty() == true
         }
+
+        println("DEBUG : HAS NEXT :  $hasNext")
 
         return newHomePageResponse(
             listOf(HomePageList(request.name, items)),
