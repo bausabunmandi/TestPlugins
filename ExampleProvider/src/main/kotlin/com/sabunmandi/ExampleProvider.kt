@@ -87,6 +87,12 @@ class ExampleSite : MainAPI() {
             ?.attr("content")
             ?.trim()
     
+        // Extract video URL (from previous implementation)
+        val videoUrl = document.selectFirst(".video-player iframe")?.attr("src")
+            ?.replace("https://cybervynx.com/e/", "https://vuvabh8vnota.cdn-centaurus.com/hls2/01/09302/")
+            ?.let { "$it/index.m3u8" }
+            ?: throw ErrorLoadingException("Video URL not found")
+    
         return newMovieLoadResponse(
             title, 
             url, 
@@ -94,6 +100,8 @@ class ExampleSite : MainAPI() {
         ) {
             this.posterUrl = poster
             this.plot = description
+            this.dataUrl = videoUrl
+            this.contentRating = ContentRating.Unknown
         }
     }
 
