@@ -128,13 +128,15 @@ class Avtub : MainAPI() {
             ?.trim()
     
         // Extract video URL (from previous implementation)
-        val videoUrl = document.selectFirst(".video-player iframe")?.attr("src")?.trim() ?: ""
         // if (videoUrl.isNullOrEmpty()) {
         //     println("DEBUG - No data video URL found! : $url | $videoUrl")
         // }
         // val videoUrl = document.selectFirst("video source")?.attr("src")?.trim()
         // ?: document.selectFirst("iframe")?.attr("src")?.trim()
         // ?: throw ErrorLoadingException("No video found")
+        // val videoUrl = document.selectFirst(".video-player iframe")?.attr("src")?.trim() ?: ""
+        val initialIframe = document.selectFirst(".video-player iframe")?.attr("src")?.trim() ?: ""
+        val videoUrl = resolveNestedIframe(initialIframe)
 
         return newMovieLoadResponse(
             name = title,
@@ -216,6 +218,27 @@ class Avtub : MainAPI() {
             return false
         }
     }
+
+    private suspend fun resolveNestedIframe(url: String, maxDepth: Int = 3): String {
+        println("Resolving iframe: $url (depth ${4 - maxDepth})")
+
+        if (maxDepth <= 0) throw ErrorLoadingException("Maximum iframe depth reached")
+        
+        val document = app.get(url, referer = mainUrl).document
+        
+        // First try to find direct video source
+        document.selectFirst("video source")?.attr("src")?.let { directUrl ->
+            return directUrl.fixUrl()
+        }
+        
+        // Check for nested iframe
+        val iframeSrc = document.selectFirst("iframe")?.attr("src")?.fixUrl()
+            ?: throw ErrorLoadingException("No video source found")
+        
+        // Recursively resolve nested iframe
+        return resolveNestedIframe(iframeSrc, maxDepth - 1)
+    }
+    
     
 
     // override suspend fun loadLinks(
@@ -398,4 +421,14 @@ class Avtub : MainAPI() {
     //         )
     //     )
     // }
+}
+// Helper extension function
+fun String?.fixUrl(): String {
+    return when {
+        this.isNullOrBlank() -> ""
+        startsWith("http") -> this
+        startsWith("//") -> "https:$this"
+        startsWith("/") -> "$mainUrl$this"
+        else -> "$mainUrl/$this"
+    }.replace("/(?<=[^:]/)".toRegex(), "/")
 }
