@@ -171,7 +171,7 @@ class Avtub : MainAPI() {
     ): Boolean {
         try {
             if (data.contains("filemoon")) {
-                println("FILEMOON")
+                println("FILEMOON : $data")
                 loadExtractor(data, subtitleCallback, callback)
                 return true
             }
