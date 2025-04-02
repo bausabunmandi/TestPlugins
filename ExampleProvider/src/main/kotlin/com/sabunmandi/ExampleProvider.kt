@@ -88,13 +88,17 @@ class ExampleSite : MainAPI() {
             ?.trim()
     
         // Extract video URL (from previous implementation)
-        val videoUrl = document.selectFirst(".video-player iframe")?.attr("src")?.trim()
+        // val videoUrl = document.selectFirst(".video-player iframe")?.attr("src")?.trim()
     
+        val videoUrl = document.selectFirst("video source")?.attr("src")?.trim()
+        ?: document.selectFirst("iframe")?.attr("src")?.trim()
+        ?: throw ErrorLoadingException("No video found")
+
         return newMovieLoadResponse(
             title, 
             url, 
             TvType.Movie
-            dataUrl = videoUrl
+            videoUrl
         ) {
             this.posterUrl = poster
             this.plot = description
@@ -122,7 +126,8 @@ class ExampleSite : MainAPI() {
                     name = "Direct Stream",  // Single display name
                     url = iframeUrl,
                     referer = "https://cybervynx.com/",
-                    isM3u8 = true
+                    quality = Qualities.Unknown.value, // Mandatory parameter
+                    type = ExtractorLinkType.HLS // Replaces isM3u8
                 )
             )
     
