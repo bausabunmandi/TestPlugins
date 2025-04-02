@@ -119,7 +119,7 @@ class ExampleSite : MainAPI() {
             val document = app.get(data).document
             
             // 1. Find JWPlayer script
-            val script = document.select("script:containsData(source)").html()
+            val script = document.select("script:containsData(sources)").toString()
             println("SCRIPT_CONTENT: $script") // Check via ADB logcat
 
             // // 2. Extract JWPlayer setup configuration
