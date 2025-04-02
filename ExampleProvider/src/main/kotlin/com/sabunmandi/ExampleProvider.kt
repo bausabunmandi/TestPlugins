@@ -114,23 +114,30 @@ class ExampleSite : MainAPI() {
         try {
             val document = app.get(data).document
             
-            val iframeUrl = document.selectFirst(".video-player iframe")
-                ?.attr("src")
-                ?.replace("https://cybervynx.com/e/", "https://vuvabh8vnota.cdn-centaurus.com/hls2/01/09302/")
-                ?.let { "$it/index.m3u8" }
+            // 1. Extract the iframe source and video ID
+            val iframeUrl = document.selectFirst(".video-player iframe")?.attr("src") 
                 ?: return false
-    
+            val videoId = iframeUrl.substringAfterLast("/e/").substringBefore("?").trim()
+            
+            // 2. Construct the master playlist URL with all parameters
+            val scriptContent = document.select("script:containsData(master.m3u8)").html()
+            val queryParams = Regex("""master\.m3u8\?(.*?)['"]""").find(scriptContent)?.groupValues?.get(1)
+                ?: throw ErrorLoadingException("Missing stream parameters")
+
+            val masterUrl = "https://vuvabh8vnota.cdn-centaurus.com/hls2/01/09302/${videoId}_n/master.m3u8?$queryParams"
+
+            // 3. Create the extractor link
             callback.invoke(
                 ExtractorLink(
                     source = name,
-                    name = "Direct Stream",  // Single display name
-                    url = iframeUrl,
+                    name = "CDN-Centaurus Stream",
+                    url = masterUrl,
                     referer = "https://cybervynx.com/",
-                    quality = Qualities.Unknown.value, // Mandatory parameter
-                    isM3u8 = true
+                    quality = Qualities.Unknown.value,
+                    type = ExtractorLinkType.HLS
                 )
             )
-    
+
             return true
         } catch (e: Exception) {
             return false
