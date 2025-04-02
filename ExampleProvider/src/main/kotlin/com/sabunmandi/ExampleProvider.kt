@@ -119,23 +119,28 @@ class ExampleSite : MainAPI() {
             val document = app.get(data).document
             
             // 1. Find JWPlayer script
-            val script = document.select("script:containsData(jwplayer)").html()
+            val script = document.select("script:containsData(source)").html()
             println("SCRIPT_CONTENT: $script") // Check via ADB logcat
 
-            // 2. Extract JWPlayer setup configuration
-            val jwConfig = Regex("jwplayer\\(.*?\\)\\.setup\\(\\s*(\\{.*?\\})\\s*\\)", RegexOption.DOT_MATCHES_ALL)
-                .find(script)
-                ?.groupValues?.get(1)
-                ?: throw ErrorLoadingException("JWPlayer config not found")
+            // // 2. Extract JWPlayer setup configuration
+            // val jwConfig = Regex("jwplayer\\(.*?\\)\\.setup\\(\\s*(\\{.*?\\})\\s*\\)", RegexOption.DOT_MATCHES_ALL)
+            //     .find(script)
+            //     ?.groupValues?.get(1)
+            //     ?: throw ErrorLoadingException("JWPlayer config not found")
 
-            println("JW_CONFIG: $jwConfig")
+            // println("JW_CONFIG: $jwConfig")
 
-            // 3. Extract HLS master URL
-            val masterUrl = Regex("""file:\s*["'](.*?\.m3u8[^"']*)["']""")
-                .find(jwConfig)
-                ?.groupValues?.get(1)
-                ?.replace("\\/", "/")
-                ?: throw ErrorLoadingException("HLS URL not found")
+            // // 3. Extract HLS master URL
+            // val masterUrl = Regex("""file:\s*["'](.*?\.m3u8[^"']*)["']""")
+            //     .find(jwConfig)
+            //     ?.groupValues?.get(1)
+            //     ?.replace("\\/", "/")
+            //     ?: throw ErrorLoadingException("HLS URL not found")
+            val masterUrl = Regex("""file:\s*["'](https://vuvabh8vnota\.cdn-centaurus\.com/hls2/01/09302/[^"']+\.m3u8[^"']*)["']""")
+                            .find(script)
+                            ?.groupValues?.get(1)
+                            ?.replace("\\/", "/")
+                            ?: throw ErrorLoadingException("HLS URL not found")
 
             println("MASTER_URL: $masterUrl")
 
