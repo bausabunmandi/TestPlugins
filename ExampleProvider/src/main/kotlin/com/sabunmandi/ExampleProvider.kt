@@ -1,5 +1,6 @@
 package com.sabunmandi
 
+import android.util.Log
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
 import org.jsoup.nodes.Element
@@ -143,7 +144,7 @@ class ExampleSite : MainAPI() {
             // app.postNotification("Extracted file URL: ${fileUrl ?: "NULL"}")
             // println("DEBUG - Extracted file URL: ${fileUrl ?: "NULL"}")
 
-            app.postNotification("Master URL: $masterUrl")
+            Log.d("Pain", masterUrl)
             println("DEBUG - Master URL: $masterUrl")
             // 3. Create the extractor link
             callback.invoke(
