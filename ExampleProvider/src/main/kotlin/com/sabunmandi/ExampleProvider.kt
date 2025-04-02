@@ -17,9 +17,9 @@ class ExampleSite : MainAPI() {
 
     override val mainPage = mainPageOf(
         "$mainUrl" to "New Videos",
-        "$mainUrl/popular/" to "Popular",
-        "$mainUrl/random/" to "Random",
-        "$mainUrl/longest/" to "Longest"
+        "$mainUrl/popular" to "Popular",
+        "$mainUrl/random" to "Random",
+        "$mainUrl/longest" to "Longest"
     )
 
     override suspend fun getMainPage(
@@ -27,6 +27,7 @@ class ExampleSite : MainAPI() {
         request: MainPageRequest
     ): HomePageResponse {
         val targetUrl = "${request.data}/page/${page}/"
+        println("DEBUG : TARGET URL :  $targetUrl")
         
         val document = app.get(targetUrl).document
         
