@@ -32,7 +32,6 @@ class ExampleSite : MainAPI() {
 
             newMovieSearchResponse(title, href, TvType.Movie) {
                 this.posterUrl = poster
-                this.apiName = this@ExampleSitePlugin.name
             }
         }
 
