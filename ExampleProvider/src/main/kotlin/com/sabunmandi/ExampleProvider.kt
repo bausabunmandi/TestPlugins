@@ -16,10 +16,10 @@ class ExampleSite : MainAPI() {
     override val hasDownloadSupport = false
 
     override val mainPage = mainPageOf(
-        "$mainUrl/" to "New Videos",
-        "$mainUrl/popular/" to "Popular",
-        "$mainUrl/random/" to "Random",
-        "$mainUrl/longest/" to "Longest"
+        "$mainUrl" to "New Videos",
+        "$mainUrl/popular" to "Popular",
+        "$mainUrl/random" to "Random",
+        "$mainUrl/longest" to "Longest"
     )
 
     override suspend fun getMainPage(
@@ -44,7 +44,11 @@ class ExampleSite : MainAPI() {
         }
 
         // Pagination detection (same for all categories)
-        val hasNext = document.selectFirst("ul.pagination li:last-child a:contains(Next)") != null
+        val hasNext = document.select("ul.pagination").let { pagination ->
+            pagination?.last()?.select("li:last-child a:contains(Next)")?.firstOrNull()?.let {
+                it.text().equals("Next", ignoreCase = true) && it.attr("href").contains("/page/")
+            } ?: false
+        }
 
         return newHomePageResponse(
             listOf(HomePageList(request.name, items)),
