@@ -19,6 +19,17 @@ class Avtub : MainAPI() {
         "$mainUrl/category/bokep-indo/?filter=random" to "Random"
     )
 
+    // Helper extension function
+    fun String?.fixUrl(): String {
+        return when {
+            this.isNullOrBlank() -> ""
+            startsWith("http") -> this
+            startsWith("//") -> "https:$this"
+            startsWith("/") -> "$mainUrl$this"
+            else -> "$mainUrl/$this"
+        }.replace("/(?<=[^:]/)".toRegex(), "/")
+    }
+
     override suspend fun getMainPage(
         page: Int,
         request: MainPageRequest
@@ -421,14 +432,4 @@ class Avtub : MainAPI() {
     //         )
     //     )
     // }
-}
-// Helper extension function
-fun String?.fixUrl(): String {
-    return when {
-        this.isNullOrBlank() -> ""
-        startsWith("http") -> this
-        startsWith("//") -> "https:$this"
-        startsWith("/") -> "$mainUrl$this"
-        else -> "$mainUrl/$this"
-    }.replace("/(?<=[^:]/)".toRegex(), "/")
 }
