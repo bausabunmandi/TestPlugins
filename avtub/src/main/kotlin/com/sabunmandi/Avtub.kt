@@ -36,7 +36,7 @@ class Avtub : MainAPI() {
             // val content = article.selectFirst(".featured-content-image") ?: return@mapNotNull null
             val href = article.selectFirst("a")?.attr("href") ?: return@mapNotNull null
             val title = article.selectFirst(".post-thumbnail img")?.attr("alt") ?: "No Title"
-            val poster = article.selectFirst(".post-thumbnail img")?.attr("src")
+            val poster = article.selectFirst(".post-thumbnail img")?.attr("data-src")
 
             println("CONTENTTTTTTXXXXX :  $href")
 
