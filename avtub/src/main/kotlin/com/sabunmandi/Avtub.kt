@@ -148,8 +148,8 @@ class Avtub : MainAPI() {
         // val videoUrl = document.selectFirst(".video-player iframe")?.attr("src")?.trim() ?: ""
         val initialIframeUrl = document.selectFirst(".video-player iframe")?.attr("src")?.fixUrl()
         ?: throw ErrorLoadingException("No video iframe found")
-        // val videoUrl = initialIframeUrl
-        val videoUrl = resolveNestedIframe(initialIframeUrl)
+        val videoUrl = initialIframeUrl
+        // val videoUrl = resolveNestedIframe(initialIframeUrl)
 
         return newMovieLoadResponse(
             name = title,
@@ -162,6 +162,7 @@ class Avtub : MainAPI() {
         }
     }
 
+    
     override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
@@ -169,6 +170,12 @@ class Avtub : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         try {
+            if (data.contains("filemoon")) {
+                println("FILEMOON")
+                loadExtractor(data, subtitleCallback, callback)
+                return true
+            }
+
             println("===========================")
 
             // 1. Load the main document and extract the iframe URL.
