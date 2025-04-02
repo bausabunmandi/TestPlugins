@@ -97,11 +97,10 @@ class ExampleSite : MainAPI() {
             title, 
             url, 
             TvType.Movie
+            dataUrl = videoUrl
         ) {
             this.posterUrl = poster
             this.plot = description
-            this.dataUrl = videoUrl
-            this.contentRating = ContentRating.Unknown
         }
     }
 
