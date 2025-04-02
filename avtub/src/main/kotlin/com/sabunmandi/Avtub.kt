@@ -30,13 +30,13 @@ class Avtub : MainAPI() {
         
         val document = app.get(targetUrl).document
         
-        val items = document.select(".site-main article").mapNotNull { item ->
-            println("DEBUGXXXXXXXXX :  $item")
+        val items = document.select(".site-main article").mapNotNull { article ->
+            println("DEBUGXXXXXXXXX :  $article")
             // Your existing item parsing logic
-            val content = item.selectFirst(".featured-content-image") ?: return@mapNotNull null
-            val href = item.selectFirst("a")?.attr("href") ?: return@mapNotNull null
-            val title = item.selectFirst(".post-thumbnail img")?.attr("alt") ?: "No Title"
-            val poster = item.selectFirst(".post-thumbnail img")?.attr("src")
+            val content = article.selectFirst(".featured-content-image") ?: return@mapNotNull null
+            val href = article.selectFirst("a")?.attr("href") ?: return@mapNotNull null
+            val title = article.selectFirst(".post-thumbnail img")?.attr("alt") ?: "No Title"
+            val poster = article.selectFirst(".post-thumbnail img")?.attr("src")
 
             newMovieSearchResponse(title, href, TvType.Movie) {
                 this.posterUrl = poster
