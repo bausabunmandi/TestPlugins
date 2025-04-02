@@ -13,7 +13,7 @@ class ExampleSite : MainAPI() {
     override val hasDownloadSupport = false
 
     override val mainPage = mainPageOf(
-        "$mainUrl/" to "New Videos",
+        "$mainUrl" to "New Videos",
         "$mainUrl/popular" to "Popular",
         "$mainUrl/random" to "Random",
         "$mainUrl/longest/" to "Longest"
@@ -23,12 +23,7 @@ class ExampleSite : MainAPI() {
         page: Int,
         request: MainPageRequest
     ): HomePageResponse {
-        val baseUrl = request.data.removeSuffix("/")
-        val targetUrl = if (page == 1) {
-            baseUrl
-        } else {
-            "$baseUrl/page/$page/"
-        }
+        val targetUrl = "${request.data}/page/${page}/"
         
         println("DEBUG : TARGET URL :  $targetUrl")
         
