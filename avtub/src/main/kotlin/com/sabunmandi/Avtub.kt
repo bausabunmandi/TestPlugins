@@ -6,8 +6,8 @@ import com.lagradost.cloudstream3.utils.*
 import org.jsoup.nodes.Element
 // https://avtub.men/category/bokep-indo/
 // avtub.app
-class ExampleSite : MainAPI() {
-    override var mainUrl = "https://igodesu.tv"
+class Avtub : MainAPI() {
+    override var mainUrl = " https://avtub.men/category/bokep-indo/"
     override var name = "Example Site"
     override val hasMainPage = true
     override val supportedTypes = setOf(TvType.Movie)
@@ -30,12 +30,12 @@ class ExampleSite : MainAPI() {
         
         val document = app.get(targetUrl).document
         
-        val items = document.select(".post-list .video-item").mapNotNull { item ->
+        val items = document.select(".site-main article").mapNotNull { item ->
             // Your existing item parsing logic
             val content = item.selectFirst(".featured-content-image") ?: return@mapNotNull null
-            val href = content.selectFirst("a")?.attr("href") ?: return@mapNotNull null
-            val title = content.selectFirst("img")?.attr("alt") ?: "No Title"
-            val poster = content.selectFirst("img")?.attr("src")
+            val href = item.selectFirst("a")?.attr("href") ?: return@mapNotNull null
+            val title = item.selectFirst(".post-thumbnail img")?.attr("alt") ?: "No Title"
+            val poster = item.selectFirst(".post-thumbnail img")?.attr("src")
 
             newMovieSearchResponse(title, href, TvType.Movie) {
                 this.posterUrl = poster
@@ -44,7 +44,7 @@ class ExampleSite : MainAPI() {
 
         // Pagination detection (same for all categories)
         val hasNext = document.select("ul.pagination").let { pagination ->
-            pagination?.last()?.select("li:last-child a:contains(Next)")?.firstOrNull()?.let {
+            pagination?.last()?.select("li:nth-last-child(2) a:contains(Next)")?.firstOrNull()?.let {
                 it.text().equals("Next", ignoreCase = true) && it.attr("href").contains("/page/")
             } ?: false
         }
