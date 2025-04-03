@@ -6,10 +6,10 @@ import com.lagradost.cloudstream3.extractors.FileMoon
 import android.content.Context
 
 @CloudstreamPlugin
-class DrbokepPlugin: Plugin() {
+class SebokepPlugin: Plugin() {
     override fun load(context: Context) {
         // All providers should be added in this manner. Please don't edit the providers list directly.
-        registerMainAPI(Drbokep())
+        registerMainAPI(Sebokep())
         // Register FileMoon extractor
         // registerExtractorAPI(FileMoonTo())
         // Register FileMoon extractor

@@ -6,9 +6,9 @@ import com.lagradost.cloudstream3.utils.*
 import org.jsoup.nodes.Element
 // https://avtub.men/category/bokep-indo/
 // avtub.app
-class Drbokep : MainAPI() {
-    override var mainUrl = "https://drbokep.skin/"
-    override var name = "drbokep"
+class Sebokep : MainAPI() {
+    override var mainUrl = "https://sebokep.com/"
+    override var name = "sebokep"
     override val hasMainPage = true
     override val supportedTypes = setOf(TvType.Movie)
     // override val hasDownloadSupport = false
@@ -211,7 +211,7 @@ class Drbokep : MainAPI() {
                 throw ErrorLoadingException("setupPlayer URL not found")
             }
 
-            val masterUrl = resolveRedirects("https://fem.pemersatu.link/${urlCandidates.first()}")
+            val masterUrl = "https://fem.pemersatu.link/${urlCandidates.first()}"
 
 
             println("DEBUG - MASTER_URL: $masterUrl")
@@ -237,22 +237,6 @@ class Drbokep : MainAPI() {
             println("ERROR - ${e.stackTraceToString()}")
             return false
         }
-    }
-
-    private suspend fun resolveRedirects(initialUrl: String, maxRedirects: Int = 5): String {
-        var currentUrl = initialUrl
-        repeat(maxRedirects) {
-            val response = app.get(currentUrl, allowRedirects = false)
-            when (response.code) {
-                in 300..399 -> {
-                    println("DEBUG - REDIRECT TO : ${response.headers}")
-                    currentUrl = response.headers["Location"]?.fixUrl()
-                        ?: return currentUrl
-                }
-                else -> return response.url
-            }
-        }
-        return currentUrl
     }
 
     private suspend fun resolveNestedIframe(url: String, depth: Int = 3): String {
