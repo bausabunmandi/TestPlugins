@@ -171,9 +171,9 @@ class Avtub : MainAPI() {
     ): Boolean {
         try {
             // if (data.contains("filemoon")) {
-                println("TEST EXTRACTOR : $data")
-                loadExtractor(data, subtitleCallback, callback)
-                return true
+                // println("TEST EXTRACTOR : $data")
+                // loadExtractor(data, subtitleCallback, callback)
+                // return true
             // }
 
             println("===========================")
@@ -191,9 +191,9 @@ class Avtub : MainAPI() {
             println("DEBUG - Extracted packed JS: $extractedPack")
             
             // 4. Unpack the JavaScript using the CloudStream JsUnpacker utility.
-            val unPacked = JsUnpacker(extractedPack).unpack() 
-                ?: throw ErrorLoadingException("Unpacking failed")
-            println("DEBUG - Unpacked JS: $unPacked")
+            // val unPacked = JsUnpacker(extractedPack).unpack() 
+            //     ?: throw ErrorLoadingException("Unpacking failed")
+            // println("DEBUG - Unpacked JS: $unPacked")
             
             // 5. Extract the HLS master URL dynamically from the unpacked script.
             // This regex will match any URL starting with http or https that ends with .m3u8 and includes any query parameters.
@@ -201,14 +201,14 @@ class Avtub : MainAPI() {
             //     .find(unPacked)
             //     ?.groupValues?.get(1)
             //     ?: throw ErrorLoadingException("HLS URL not found in unpacked script")
-
-            val urlCandidates = Regex("""["']([a-zA-Z0-9_]+)["']\s*:\s*["']([^"']+\.m3u8[^"']*)["']""")
+            // setupPlayer("videoplayback.php?data=NiNNNPNGNVNpj8NiNyN0NA767uNpNINvNc7vNnN47INjNJjKNhNJ7yjmNvNjN7NWjPNLjx7ZNWNdNXNbjpN8jEN.N07vNbN3NmNwN27fN-Ns7HN0jiNnNNNpNz7lNTNsNVNq4ba6e2025b3ea48a2602bed463c3580d70d998d71ead45586e1361cfc3a269f6N8jNj3jcN.N3NwN3jMjwjPN3N_NZj3N-N57_NbNeNeN7NRN-NTNLN~jJj07INCNHjbNdNFNyNzNWj7N.jEjAjCjWjqN_NeNrN3jXN5N47w7ZNsNHNVNCN0NZjbNR71NqNPjiNiN9jsNFNA7Fj7jjjejijxNqNYNdNGNUNl7.&type=direct&typem=mp4");
+            val urlCandidates = Regex("""setupPlayer\(\s*"([^"]+)"\s*\)""")
                 .findAll(unPacked)
-                .map { it.groupValues[2] }
+                .map { it.groupValues[1] }  // Get the first captured group
                 .toList()
 
             if (urlCandidates.isEmpty()) {
-                throw ErrorLoadingException("HLS URL not found in unpacked script")
+                throw ErrorLoadingException("setupPlayer URL not found")
             }
 
             val masterUrl = urlCandidates.first()
