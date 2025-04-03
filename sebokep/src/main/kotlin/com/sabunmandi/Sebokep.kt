@@ -63,11 +63,11 @@ class Sebokep : MainAPI() {
             val poster = article.selectFirst(".post-thumbnail img")?.attr("data-src")
             val poster2 = article.selectFirst(".post-thumbnail img")?.attr("src")
 
-            println("POSTER :  $poster")
-            println("POSTER2 :  $poster2")
+            // println("POSTER :  $poster")
+            // println("POSTER2 :  $poster2")
 
             newMovieSearchResponse(title, href, TvType.Movie) {
-                this.posterUrl = poster
+                this.posterUrl = poster2
             }
         }
 
