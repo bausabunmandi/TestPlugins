@@ -186,7 +186,7 @@ class Avtub : MainAPI() {
             // 3. Extract the packed JS snippet using the common packer pattern.
             val extractedPack = mainDoc
                 .selectFirst("script:containsData(sources)")
-                ?.html()
+                ?.html() ?: throw ErrorLoadingException("JS script source not found")
             
             println("DEBUG - Extracted packed JS: $extractedPack")
             
@@ -203,7 +203,7 @@ class Avtub : MainAPI() {
             //     ?: throw ErrorLoadingException("HLS URL not found in unpacked script")
             // setupPlayer("videoplayback.php?data=NiNNNPNGNVNpj8NiNyN0NA767uNpNINvNc7vNnN47INjNJjKNhNJ7yjmNvNjN7NWjPNLjx7ZNWNdNXNbjpN8jEN.N07vNbN3NmNwN27fN-Ns7HN0jiNnNNNpNz7lNTNsNVNq4ba6e2025b3ea48a2602bed463c3580d70d998d71ead45586e1361cfc3a269f6N8jNj3jcN.N3NwN3jMjwjPN3N_NZj3N-N57_NbNeNeN7NRN-NTNLN~jJj07INCNHjbNdNFNyNzNWj7N.jEjAjCjWjqN_NeNrN3jXN5N47w7ZNsNHNVNCN0NZjbNR71NqNPjiNiN9jsNFNA7Fj7jjjejijxNqNYNdNGNUNl7.&type=direct&typem=mp4");
             val urlCandidates = Regex("""setupPlayer\(\s*"([^"]+)"\s*\)""")
-                .findAll(unPacked)
+                .findAll(extractedPack)
                 .map { it.groupValues[1] }  // Get the first captured group
                 .toList()
 
