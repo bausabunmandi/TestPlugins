@@ -131,8 +131,7 @@ class Sebokep : MainAPI() {
             ?: "No Title"
     
         // Get poster from itemprop="thumbnailUrl"
-        val poster = videoPlayer.select("meta[itemprop=thumbnailUrl]")
-            .attr("content")
+        val poster = document.selectFirst("meta[property='og:image']")
             .trim()
             .ifEmpty { document.selectFirst(".featured-image img")?.attr("src")?.trim() }
     
