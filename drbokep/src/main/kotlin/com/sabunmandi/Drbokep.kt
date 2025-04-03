@@ -211,7 +211,7 @@ class Avtub : MainAPI() {
                 throw ErrorLoadingException("setupPlayer URL not found")
             }
 
-            val masterUrl = urlCandidates.first()
+            val masterUrl = "https://fem.pemersatu.link/${urlCandidates.first()}"
 
 
             println("DEBUG - MASTER_URL: $masterUrl")
