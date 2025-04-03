@@ -26,7 +26,63 @@ class Igodesu : MainAPI() {
         val targetUrl = "${request.data}/page/${page}/"
         
         println("DEBUG : TARGET URL :  $targetUrl")
+
+        return if (request.data.contains("/random")) {
+            // Handle AJAX random page
+            handleRandomPage(page, request)
+        } else {
+            // Normal page handling
+            handleNormalPage(page, request)
+        }
+    }
+
+    private suspend fun handleRandomPage(page: Int, request: MainPageRequest): HomePageResponse {
+        // 1. Make the AJAX POST request
+        val response = app.post(
+            url = "$mainUrl/ajaxRandom/",
+            data = mapOf(
+                "page" to page.toString(),
+                "query" to "" // Empty query as per JS code
+            ),
+            headers = mapOf(
+                "X-Requested-With" to "XMLHttpRequest", // Required for AJAX
+                "Content-Type" to "application/x-www-form-urlencoded; charset=UTF-8"
+            )
+        )
+    
+        // 2. Parse the HTML response
+        val document = response.document
+
+        println("DEBUG : RANDOM PAGE :  $document")
         
+        // 3. Extract items from the AJAX response
+        val items = document.select(".post-list .video-item").mapNotNull { item ->
+            // Your existing item parsing logic
+            val content = item.selectFirst(".featured-content-image") ?: return@mapNotNull null
+            val href = content.selectFirst("a")?.attr("href") ?: return@mapNotNull null
+            val title = content.selectFirst("img")?.attr("alt") ?: "No Title"
+            val poster = content.selectFirst("img")?.attr("src")
+
+            newMovieSearchResponse(title, href, TvType.Movie) {
+                this.posterUrl = poster
+            }
+        }
+    
+        // Pagination detection (same for all categories)
+        val hasNext = document.select("ul.pagination").let { pagination ->
+            pagination?.last()?.select("li:last-child a:contains(Next)")?.firstOrNull()?.let {
+                it.text().equals("Next", ignoreCase = true) && it.attr("href").contains("/page/")
+            } ?: false
+        }
+    
+        return newHomePageResponse(
+            listOf(HomePageList(request.name, items)),
+            hasNext = hasNext
+        )
+    }
+
+    private suspend fun handleNormalPage(page: Int, request: MainPageRequest): HomePageResponse {
+        val targetUrl = "${request.data}/page/${page}/"
         val document = app.get(targetUrl).document
         
         val items = document.select(".post-list .video-item").mapNotNull { item ->
@@ -40,19 +96,20 @@ class Igodesu : MainAPI() {
                 this.posterUrl = poster
             }
         }
-
+    
         // Pagination detection (same for all categories)
         val hasNext = document.select("ul.pagination").let { pagination ->
             pagination?.last()?.select("li:last-child a:contains(Next)")?.firstOrNull()?.let {
                 it.text().equals("Next", ignoreCase = true) && it.attr("href").contains("/page/")
             } ?: false
         }
-
+        
         return newHomePageResponse(
             listOf(HomePageList(request.name, items)),
             hasNext = hasNext
         )
     }
+    
 
     // =========================== Search ===========================
     override suspend fun search(query: String): List<SearchResponse> {
