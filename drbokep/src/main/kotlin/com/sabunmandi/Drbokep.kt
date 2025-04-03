@@ -170,11 +170,11 @@ class Avtub : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         try {
-            if (data.contains("filemoon")) {
-                println("FILEMOON : $data")
+            // if (data.contains("filemoon")) {
+                println("TEST EXTRACTOR : $data")
                 loadExtractor(data, subtitleCallback, callback)
                 return true
-            }
+            // }
 
             println("===========================")
 
