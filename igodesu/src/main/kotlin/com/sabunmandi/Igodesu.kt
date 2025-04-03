@@ -4,11 +4,10 @@ import android.util.Log
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
 import org.jsoup.nodes.Element
-// https://avtub.men/category/bokep-indo/
-// avtub.app
-class ExampleSite : MainAPI() {
+
+class Igodesu : MainAPI() {
     override var mainUrl = "https://igodesu.tv"
-    override var name = "Example Site"
+    override var name = "Igodesu"
     override val hasMainPage = true
     override val supportedTypes = setOf(TvType.Movie)
     override val hasDownloadSupport = false
@@ -16,7 +15,7 @@ class ExampleSite : MainAPI() {
     override val mainPage = mainPageOf(
         "$mainUrl" to "New Videos",
         // "$mainUrl/popular" to "Popular",
-        // "$mainUrl/random" to "Random",
+        "$mainUrl/random" to "Random",
         // "$mainUrl/longest/" to "Longest"
     )
 
