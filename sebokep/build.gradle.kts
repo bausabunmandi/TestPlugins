@@ -11,7 +11,7 @@ cloudstream {
     // All of these properties are optional, you can safely remove them
 
     description = "Lorem ipsum"
-    authors = listOf("Cloudburst")
+    authors = listOf("SabunMandi")
 
     /**
      * Status int as the following:
@@ -25,10 +25,10 @@ cloudstream {
     tvTypes = listOf("Movie")
 
     requiresResources = true
-    language = "en"
+    language = "id"
 
     // random cc logo i found
-    iconUrl = "https://www.google.com/s2/favicons?domain=sebokep.com&sz=%size%"
+    // iconUrl = "https://www.google.com/s2/favicons?domain=sebokep.com&sz=%size%"
 }
 
 android {
