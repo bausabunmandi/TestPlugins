@@ -1,7 +1,7 @@
 {
     "name": "Test",
     "description": "Testy",
-    "manifestVersion": 1,
+    "manifestVersion": 2,
     "pluginLists": [
       "https://raw.githubusercontent.com/bausabunmandi/TestPlugins/refs/heads/builds/plugins.json"
     ]
