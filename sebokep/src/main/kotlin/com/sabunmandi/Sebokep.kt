@@ -4,6 +4,7 @@ import android.util.Log
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
 import org.jsoup.nodes.Element
+
 // https://avtub.men/category/bokep-indo/
 // avtub.app
 class Sebokep : MainAPI() {
@@ -211,9 +212,9 @@ class Sebokep : MainAPI() {
                 throw ErrorLoadingException("setupPlayer URL not found")
             }
 
-            val masterUrl = "https://fem.pemersatu.link/${urlCandidates.first()}"
+            val masterUrl = resolveRedirects("https://fem.pemersatu.link/${urlCandidates.first()}")
 
-
+            val typeVideo = when { masterUrl.contains(".mp4") -> ExtractorLinkType.VIDEO else  -> ExtractorLinkType.M3U8 }
             println("DEBUG - MASTER_URL: $masterUrl")
 
             
@@ -225,7 +226,7 @@ class Sebokep : MainAPI() {
                     url = masterUrl,
                     referer = mainUrl,
                     quality = Qualities.Unknown.value,
-                    isM3u8 = true
+                    type = typeVideo,
                 )
             )
             
@@ -237,6 +238,22 @@ class Sebokep : MainAPI() {
             println("ERROR - ${e.stackTraceToString()}")
             return false
         }
+    }
+
+    private suspend fun resolveRedirects(initialUrl: String, maxRedirects: Int = 5): String {
+        var currentUrl = initialUrl
+        repeat(maxRedirects) {
+            val response = app.get(currentUrl, allowRedirects = false)
+            when (response.code) {
+                in 300..399 -> {
+                    println("DEBUG - REDIRECT TO : ${response.headers}")
+                    currentUrl = response.headers["Location"]?.fixUrl()
+                        ?: return currentUrl
+                }
+                else -> return response.url
+            }
+        }
+        return currentUrl
     }
 
     private suspend fun resolveNestedIframe(url: String, depth: Int = 3): String {
@@ -251,202 +268,6 @@ class Sebokep : MainAPI() {
         }
 
         return url
-
-        // val t = doc.selectFirst("video")?.attr("src")
-        // println("document debug : $t")
-        
-        // // Check for direct video source first
-        // doc.selectFirst("video")?.attr("src")?.fixUrl()?.let {
-        //     return it
-        // }
-        
-        // // Check for nested iframe
-        // val newUrl = doc.selectFirst("iframe")?.attr("src")?.fixUrl()
-        //     ?: throw ErrorLoadingException("No video source found")
         
     }
-    
-    
-    
-
-    // override suspend fun loadLinks(
-    //     data: String,
-    //     isCasting: Boolean,
-    //     subtitleCallback: (SubtitleFile) -> Unit,
-    //     callback: (ExtractorLink) -> Unit
-    // ): Boolean {
-    //     try {
-    //         val document = app.get(data).document
-            
-    //         // 1. Find JWPlayer script
-    //         val script = document.select("script:containsData(sources)").toString()
-    //         println("SCRIPT_CONTENT: $script") // Check via ADB logcat
-
-    //         // // 2. Extract JWPlayer setup configuration
-    //         // val jwConfig = Regex("jwplayer\\(.*?\\)\\.setup\\(\\s*(\\{.*?\\})\\s*\\)", RegexOption.DOT_MATCHES_ALL)
-    //         //     .find(script)
-    //         //     ?.groupValues?.get(1)
-    //         //     ?: throw ErrorLoadingException("JWPlayer config not found")
-
-    //         // println("JW_CONFIG: $jwConfig")
-
-    //         // // 3. Extract HLS master URL
-    //         // val masterUrl = Regex("""file:\s*["'](.*?\.m3u8[^"']*)["']""")
-    //         //     .find(jwConfig)
-    //         //     ?.groupValues?.get(1)
-    //         //     ?.replace("\\/", "/")
-    //         //     ?: throw ErrorLoadingException("HLS URL not found")
-
-    //         val iframeUrl = document.selectFirst(".video-player iframe")?.attr("src") 
-
-    //         val iframeDoc = app.get(iframeUrl).document
-
-    //         val extractedPack = iframeDoc
-    //             .selectFirst("script:containsData(function(p,a,c,k,e,d))")
-    //             ?.data()
-    //             .toString()
-    //             .trim()
-
-    //         if (extractedPack.isEmpty()) {
-    //             throw ErrorLoadingException("Packed JS not found")
-    //         }
-    //         println("DEBUG - Extracted packed JS: $extractedPack")
-
-    //         val unPacked = JsUnpacker(extractedPack).unpack() 
-    //             ?: throw ErrorLoadingException("Unpacking failed")
-    //         println("DEBUG - Unpacked JS: $unPacked")
-
-    //         val masterUrl = Regex("""sources:\[\{\s*file:\s*["'](https?://[^"']+\.m3u8[^"']*)["']""")
-    //             .find(unPacked)
-    //             ?.groupValues?.get(1)
-    //             ?: throw ErrorLoadingException("HLS URL not found in unpacked script")
-
-    //         println("MASTER_URL: $masterUrl")
-
-    //         // 5. Return the HLS stream
-    //         callback.invoke(
-    //             ExtractorLink(
-    //                 source = name,
-    //                 name = "JWPlayer Stream",
-    //                 url = masterUrl,
-    //                 referer = data,
-    //                 quality = Qualities.Unknown.value,
-    //                 isM3u8 = true
-    //             )
-    //         )
-
-    //         return true
-
-    //     } catch (e: Exception) {
-    //         println("LOAD_LINKS_ERROR: ${e.stackTraceToString()}")
-    //         return false
-    //     }
-    // }
-
-    // override suspend fun loadLinks(
-    //     data: String,
-    //     isCasting: Boolean,
-    //     subtitleCallback: (SubtitleFile) -> Unit,
-    //     callback: (ExtractorLink) -> Unit
-    // ): Boolean {
-    //     try {
-    //         val document = app.get(data).document
-            
-    //         // 1. Extract the iframe source and video ID
-    //         val iframeUrl = document.selectFirst(".video-player iframe")?.attr("src") 
-    //             ?: return false
-    //         val videoId = iframeUrl.substringAfterLast("/e/").substringBefore("?").trim()
-            
-    //         // 2. Construct the master playlist URL with all parameters
-    //         // val scriptContent = document.select("script:containsData(master.m3u8)").html()
-    //         // val queryParams = Regex("""master\.m3u8\?(.*?)['"]""").find(scriptContent)?.groupValues?.get(1)
-            
-    //         // app.postNotification("Raw params: ${queryParams ?: "NULL"}")
-    //         // println("DEBUG - Raw params: ${queryParams ?: "NULL"}")
-
-    //         // val scriptContent = document.select("script:containsData(master.m3u8)").html()
-    //         // val queryParams = Regex("""master\.m3u8\?(.*?)['"]""").find(scriptContent)?.groupValues?.get(1)
-    //             // ?: throw ErrorLoadingException("Missing stream parameters")
-
-    //         // val masterUrl = "https://vuvabh8vnota.cdn-centaurus.com/hls2/01/09302/${videoId}_n/master.m3u8?$queryParams"
-    //         val iframeDoc = app.get(iframeUrl).document
-    //         val scriptContent = iframeDoc.select("script:containsData(sources)").html()
-    //         println("DEBUG - JWPlayer Script Content: $scriptContent")
-
-    //         val masterUrl = Regex("""file:"(https://vuvabh8vnota\.cdn-centaurus\.com/hls2/01/09302/[^"]+)""")
-    //             .find(scriptContent)?.groupValues?.get(1)
-    //         // app.postNotification("Extracted file URL: ${fileUrl ?: "NULL"}")
-    //         // println("DEBUG - Extracted file URL: ${fileUrl ?: "NULL"}")
-
-    //         // Log.d("Pain", masterUrl)
-    //         println("DEBUG - Master URL: $masterUrl")
-    //         // 3. Create the extractor link
-    //         callback.invoke(
-    //             ExtractorLink(
-    //                 source = name,
-    //                 name = "CDN-Centaurus Stream",
-    //                 url = masterUrl,
-    //                 referer = "https://cybervynx.com/",
-    //                 quality = Qualities.Unknown.value,
-    //                 isM3u8 = true
-    //             )
-    //         )
-
-    //         return true
-    //     } catch (e: Exception) {
-    //         return false
-    //     }
-    // }
-
-    // Add this to your plugin class
-    // override suspend fun loadLinks(
-    //     data: String,
-    //     isCasting: Boolean,
-    //     subtitleCallback: (SubtitleFile) -> Unit,
-    //     callback: (ExtractorLink) -> Unit
-    // ): Boolean {
-    //     try {
-    //         val document = app.get(data).document
-            
-    //         // 1. Find StreamHG iframe
-    //         val iframeSrc = document.select(".video-player iframe").attr("src")
-
-    //         // 2. Process StreamHG URL
-    //         // resolveStreamHG(iframeSrc, callback)
-    //         loadExtractor(iframeSrc, subtitleCallback, callback)
-    //         return true
-    //     } catch (e: Exception) {
-    //         return false
-    //     }
-    // }
-
-    // private suspend fun resolveStreamHG(url: String, callback: (ExtractorLink) -> Unit) {
-    //     val response = app.get(url, referer = mainUrl)
-        
-    //     // Extract encrypted source from script
-    //     val scriptContent = response.document.select("script:containsData(sources)").html()
-    //     val videoUrl = Regex("""sources:\s*\[\s*\{\s*file:\s*'(.*?)'""").find(scriptContent)
-    //         ?.groupValues?.get(1)
-    //         ?.replace("\\/", "/")
-    //         ?: throw ErrorLoadingException("No StreamHG source found")
-
-    //     // // Get quality from URL pattern
-    //     // val quality = when {
-    //     //     videoUrl.contains("/1080/") -> Qualities.FullHDP.value
-    //     //     videoUrl.contains("/720/") -> Qualities.HD.value
-    //     //     videoUrl.contains("/480/") -> Qualities.SD.value
-    //     //     else -> Qualities.Unknown.value
-    //     // }
-
-    //     callback.invoke(
-    //         ExtractorLink(
-    //             source = name,
-    //             name = name,
-    //             url = videoUrl,
-    //             referer = url,
-    //             // quality = quality,
-    //             isM3u8 = videoUrl.contains(".m3u8")
-    //         )
-    //     )
-    // }
 }

@@ -6,7 +6,7 @@ import com.lagradost.cloudstream3.extractors.FileMoon
 import android.content.Context
 
 @CloudstreamPlugin
-class SebokepPlugin: Plugin() {
+class SebokepPlugin : Plugin() {
     override fun load(context: Context) {
         // All providers should be added in this manner. Please don't edit the providers list directly.
         registerMainAPI(Sebokep())
