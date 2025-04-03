@@ -61,8 +61,10 @@ class Sebokep : MainAPI() {
             val href = article.selectFirst("a")?.attr("href") ?: return@mapNotNull null
             val title = article.selectFirst(".post-thumbnail img")?.attr("alt") ?: "No Title"
             val poster = article.selectFirst(".post-thumbnail img")?.attr("data-src")
+            val poster2 = article.selectFirst(".post-thumbnail img")?.attr("src")
 
-            // println("CONTENTTTTTTXXXXX :  $href")
+            println("POSTER :  $poster")
+            println("POSTER2 :  $poster2")
 
             newMovieSearchResponse(title, href, TvType.Movie) {
                 this.posterUrl = poster
