@@ -213,7 +213,7 @@ class Drbokep : MainAPI() {
 
             val masterUrl = resolveRedirects("https://fem.pemersatu.link/${urlCandidates.first()}")
 
-
+            val typeVideo = when { masterUrl.contains(".mp4") -> ExtractorLinkType.VIDEO else  -> ExtractorLinkType.M3U8 }
             println("DEBUG - MASTER_URL: $masterUrl")
 
             
@@ -225,7 +225,7 @@ class Drbokep : MainAPI() {
                     url = masterUrl,
                     referer = mainUrl,
                     quality = Qualities.Unknown.value,
-                    isM3u8 = true
+                    type = typeVideo,
                 )
             )
             
