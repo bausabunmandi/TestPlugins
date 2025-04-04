@@ -27,7 +27,7 @@ class Igodesu : MainAPI() {
         
         println("DEBUG : TARGET URL :  $targetUrl")
 
-        return if (request.data.contains("/random")) {
+        return if (request.data.contains("random")) {
             // Handle AJAX random page
             handleRandomPage(page, request)
         } else {
