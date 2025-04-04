@@ -132,7 +132,6 @@ class Sebokep : MainAPI() {
     
         // Get poster from itemprop="thumbnailUrl"
         val poster = document.selectFirst("meta[property='og:image']")
-            .trim()
             .ifEmpty { document.selectFirst(".featured-image img")?.attr("src")?.trim() }
     
         // Get description (example additional field)
