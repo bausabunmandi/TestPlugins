@@ -53,10 +53,10 @@ class Igodesu : MainAPI() {
         // 2. Parse the HTML response
         val document = response.document
 
-        println("DEBUG : RANDOM PAGE :  $document")
+        print("DEBUG : RANDOM PAGE :  $document")
         
         // 3. Extract items from the AJAX response
-        val items = document.select(".post-list .video-item").mapNotNull { item ->
+        val items = document.select(".video-item").mapNotNull { item ->
             // Your existing item parsing logic
             val content = item.selectFirst(".featured-content-image") ?: return@mapNotNull null
             val href = content.selectFirst("a")?.attr("href") ?: return@mapNotNull null
