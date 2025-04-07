@@ -215,7 +215,7 @@ class Igodesu : MainAPI() {
             
             // 7. Return the extracted link via the callback.
             callback.invoke(
-                ExtractorLink(
+                newExtractorLink(
                     source = name,
                     name = "CDN Stream",
                     url = masterUrl,
