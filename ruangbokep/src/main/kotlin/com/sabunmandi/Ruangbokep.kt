@@ -60,14 +60,13 @@ class Ruangbokep : MainAPI() {
             // val content = article.selectFirst(".featured-content-image") ?: return@mapNotNull null
             val href = article.selectFirst("a")?.attr("href") ?: return@mapNotNull null
             val title = article.selectFirst(".post-thumbnail img")?.attr("alt") ?: "No Title"
-            val poster = article.selectFirst(".post-thumbnail img")?.attr("data-src")
-            val poster2 = article.selectFirst(".post-thumbnail img")?.attr("src")
+            val poster = article.selectFirst(".post-thumbnail img")?.attr("data-src") ?: article.selectFirst(".post-thumbnail img")?.attr("src")
 
             // println("POSTER :  $poster")
             // println("POSTER2 :  $poster2")
 
             newMovieSearchResponse(title, href, TvType.Movie) {
-                this.posterUrl = poster2
+                this.posterUrl = poster
             }
         }
 
@@ -172,26 +171,19 @@ class Ruangbokep : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         try {
-            // if (data.contains("filemoon")) {
-                // println("TEST EXTRACTOR : $data")
-                // loadExtractor(data, subtitleCallback, callback)
-                // return true
-            // }
-            loadExtractor(data, subtitleCallback, callback)
-            return true
             println("===========================")
+
+            println("DEBUG : URL : $data")
 
             // 1. Load the main document and extract the iframe URL.
             val mainDoc = app.get(data).document
 
-            println("DEBUG : $data")
-            
             // 3. Extract the packed JS snippet using the common packer pattern.
             val extractedPack = mainDoc
                 .selectFirst("script:containsData(sources)")
                 ?.html() ?: throw ErrorLoadingException("JS script source not found")
             
-            println("DEBUG - Extracted packed JS: $extractedPack")
+            print("DEBUG - Extracted packed JS: $extractedPack")
             
             // 4. Unpack the JavaScript using the CloudStream JsUnpacker utility.
             // val unPacked = JsUnpacker(extractedPack).unpack() 
@@ -214,7 +206,7 @@ class Ruangbokep : MainAPI() {
                 throw ErrorLoadingException("setupPlayer URL not found")
             }
 
-            val masterUrl = resolveRedirects("https://fem.pemersatu.link/${urlCandidates.first()}")
+            val masterUrl = urlCandidates.first()
 
             val typeVideo = when { masterUrl.contains(".mp4") -> ExtractorLinkType.VIDEO else  -> ExtractorLinkType.M3U8 }
             println("DEBUG - MASTER_URL: $masterUrl")
