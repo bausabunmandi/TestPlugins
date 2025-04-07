@@ -193,7 +193,7 @@ class Ruangbokep : MainAPI() {
             // 5. Extract the HLS master URL dynamically from the unpacked script.
             // This regex will match any URL starting with http or https that ends with .m3u8 and includes any query parameters.
             val masterUrl: String = Regex("""sources:\[\{\s*file:\s*["'](https?://[^"']+\.(m3u8|mp4)[^"']*)["']""")
-                .find(unPacked)
+                .find(extractedPack)
                 ?.groupValues?.get(1)
                 ?: throw ErrorLoadingException("Video URL not found in unpacked script")
 
