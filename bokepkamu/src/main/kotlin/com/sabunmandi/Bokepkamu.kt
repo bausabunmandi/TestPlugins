@@ -174,11 +174,13 @@ class Bokepkamu : MainAPI() {
 
             println("===========================")
 
+            println("DEBUG : URL : $data")
+
             // 1. Load the main document and extract the iframe URL.
 
-            val mainDoc = app.get(data.removeSuffix("ERROR")).document
+            val mainDoc = app.get(data).document
 
-            print("DEBUG : $data")
+            print("DEBUG : $mainDoc")
             
             val masterUrl = mainDoc.selectFirst("video source")?.attr("src")?.trim() ?: throw ErrorLoadingException("Video Source Not Found")
 

@@ -1,3 +1,5 @@
+`https://raw.githubusercontent.com/bausabunmandi/TestPlugins/refs/heads/master/repo.json`
+
 **⚠️ This is currently under development, dont use it yet if you're not comfortable with constantly merging new changes**
 
 # `Cloudstream3 Plugin Repo Template`
