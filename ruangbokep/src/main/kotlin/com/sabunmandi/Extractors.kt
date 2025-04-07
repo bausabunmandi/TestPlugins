@@ -19,3 +19,8 @@ class Pemersatu : JWPlayer() {
     override var mainUrl = "https://fem.pemersatu.link"
     override val name = "Pemersatu"
 }
+
+class Putarvid : JWPlayer() {
+    override var mainUrl = "https://putarvid.com"
+    override val name = "Putarvid"
+}

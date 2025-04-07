@@ -177,7 +177,8 @@ class Ruangbokep : MainAPI() {
                 // loadExtractor(data, subtitleCallback, callback)
                 // return true
             // }
-
+            loadExtractor(data, subtitleCallback, callback)
+            return true
             println("===========================")
 
             // 1. Load the main document and extract the iframe URL.
