@@ -180,7 +180,7 @@ class Bokepkamu : MainAPI() {
 
             print("DEBUG : $data")
             
-            val masterUrl = mainDoc.selectFirst("video source")?.attr("src")?.trim() :? ""
+            val masterUrl = mainDoc.selectFirst("video source")?.attr("src")?.trim() ?: ""
 
             val typeVideo = when { masterUrl.contains(".mp4") -> ExtractorLinkType.VIDEO else  -> ExtractorLinkType.M3U8 }
             println("DEBUG - MASTER_URL: $masterUrl")
