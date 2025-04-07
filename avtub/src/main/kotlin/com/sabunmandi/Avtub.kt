@@ -224,8 +224,7 @@ class Avtub : MainAPI() {
                     name = "CDN Stream",
                     url = masterUrl,
                     referer = mainUrl,
-                    quality = Qualities.Unknown.value,
-                    type = typeVideo,
+                    quality = Qualities.Unknown.value
                 )
             )
             
