@@ -223,9 +223,6 @@ class Avtub : MainAPI() {
                     source = name,
                     name = "CDN Stream",
                     url = masterUrl,
-                    referer = "https://cybervynx.com/",
-                    quality = Qualities.Unknown.value,
-                    isM3u8 = true
                 )
             )
             

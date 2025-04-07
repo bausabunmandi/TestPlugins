@@ -4,19 +4,20 @@ import android.util.Log
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
 import org.jsoup.nodes.Element
-// https://avtub.men/category/bokep-indo/
+
+// https://indostreaming.web.id
 // avtub.app
-class Drbokep : MainAPI() {
-    override var mainUrl = "https://drbokep.skin/"
-    override var name = "drbokep"
+class Ruangbokep : MainAPI() {
+    override var mainUrl = "https://ruangbokep.co/"
+    override var name = "Ruang Bokep"
     override val hasMainPage = true
     override val supportedTypes = setOf(TvType.Movie)
     // override val hasDownloadSupport = false
 
     override val mainPage = mainPageOf(
-        "$mainUrl/?filter=latest" to "Latest",
-        "$mainUrl/?filter=most-viewed" to "Most Viewed",
-        "$mainUrl/?filter=random" to "Random"
+        "$mainUrl/bokep-indo/?filter=latest" to "Latest",
+        "$mainUrl/bokep-indo/?filter=most-viewed" to "Most Viewed",
+        "$mainUrl/bokep-indo/?filter=random" to "Random"
     )
 
     // Helper extension function
@@ -60,11 +61,13 @@ class Drbokep : MainAPI() {
             val href = article.selectFirst("a")?.attr("href") ?: return@mapNotNull null
             val title = article.selectFirst(".post-thumbnail img")?.attr("alt") ?: "No Title"
             val poster = article.selectFirst(".post-thumbnail img")?.attr("data-src")
+            val poster2 = article.selectFirst(".post-thumbnail img")?.attr("src")
 
-            // println("CONTENTTTTTTXXXXX :  $href")
+            // println("POSTER :  $poster")
+            // println("POSTER2 :  $poster2")
 
             newMovieSearchResponse(title, href, TvType.Movie) {
-                this.posterUrl = poster
+                this.posterUrl = poster2
             }
         }
 
@@ -128,10 +131,9 @@ class Drbokep : MainAPI() {
             ?: "No Title"
     
         // Get poster from itemprop="thumbnailUrl"
-        val poster = videoPlayer.select("meta[itemprop=thumbnailUrl]")
-            .attr("content")
-            .trim()
-            .ifEmpty { document.selectFirst(".featured-image img")?.attr("src")?.trim() }
+        val poster = document.selectFirst("meta[property='og:image']")
+            ?.attr("content")
+            ?.trim()
     
         // Get description (example additional field)
         val description = document.selectFirst("meta[property='og:description']")

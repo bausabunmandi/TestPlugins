@@ -221,13 +221,10 @@ class Sebokep : MainAPI() {
             
             // 7. Return the extracted link via the callback.
             callback.invoke(
-                ExtractorLink(
+                newExtractorLink(
                     source = name,
                     name = "CDN Stream",
-                    url = masterUrl,
-                    referer = mainUrl,
-                    quality = Qualities.Unknown.value,
-                    type = typeVideo,
+                    url = masterUrl
                 )
             )
             
