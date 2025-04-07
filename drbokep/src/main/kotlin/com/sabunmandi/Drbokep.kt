@@ -219,11 +219,13 @@ class Drbokep : MainAPI() {
             
             // 7. Return the extracted link via the callback.
             callback.invoke(
-                newExtractorLink(
+                ExtractorLink(
                     source = name,
                     name = "CDN Stream",
+                    url = masterUrl,
+                    referer = mainUrl,
+                    quality = Qualities.Unknown.value,
                     type = typeVideo,
-                    url = masterUrl
                 )
             )
             
