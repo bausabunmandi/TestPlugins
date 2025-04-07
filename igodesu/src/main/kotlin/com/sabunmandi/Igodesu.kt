@@ -215,10 +215,13 @@ class Igodesu : MainAPI() {
             
             // 7. Return the extracted link via the callback.
             callback.invoke(
-                newExtractorLink(
+                ExtractorLink(
                     source = name,
                     name = "CDN Stream",
-                    url = masterUrl
+                    url = masterUrl,
+                    referer = mainUrl,
+                    quality = Qualities.Unknown.value,
+                    type = ExtractorLinkType.M3U8,
                 )
             )
             

@@ -188,7 +188,8 @@ class Ruangbokep : MainAPI() {
             // 4. Unpack the JavaScript using the CloudStream JsUnpacker utility.
             val unPacked = JsUnpacker(extractedPack).unpack() 
                 ?: throw ErrorLoadingException("Unpacking failed")
-            println("DEBUG - Unpacked JS: $unPacked")
+                
+            print("DEBUG - Unpacked JS: $unPacked")
             
             // 5. Extract the HLS master URL dynamically from the unpacked script.
             // This regex will match any URL starting with http or https that ends with .m3u8 and includes any query parameters.
@@ -203,11 +204,13 @@ class Ruangbokep : MainAPI() {
             
             // 7. Return the extracted link via the callback.
             callback.invoke(
-                newExtractorLink(
+                ExtractorLink(
                     source = name,
                     name = "CDN Stream",
+                    url = masterUrl,
+                    referer = mainUrl,
+                    quality = Qualities.Unknown.value,
                     type = typeVideo,
-                    url = masterUrl
                 )
             )
             
