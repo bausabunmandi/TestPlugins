@@ -182,7 +182,7 @@ class Bokepkamu : MainAPI() {
 
             print("DEBUG : $mainDoc")
             
-            val masterUrl = mainDoc.selectFirst("video source")?.attr("src")?.trim() ?: throw ErrorLoadingException("Video Source Not Found")
+            val masterUrl = mainDoc.selectFirst("video")?.attr("data-link")?.trim() ?: throw ErrorLoadingException("Video Source Not Found")
 
             val typeVideo = when { masterUrl.contains(".mp4") -> ExtractorLinkType.VIDEO else  -> ExtractorLinkType.M3U8 }
             println("DEBUG - MASTER_URL: $masterUrl")
