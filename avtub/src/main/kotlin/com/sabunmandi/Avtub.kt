@@ -7,7 +7,7 @@ import org.jsoup.nodes.Element
 // https://avtub.men/category/bokep-indo/
 // avtub.app
 class Avtub : MainAPI() {
-    override var mainUrl = "https://avtub.men/"
+    override var mainUrl = "https://avtub.net/"
     override var name = "Avtub"
     override val hasMainPage = true
     override val supportedTypes = setOf(TvType.Movie)
