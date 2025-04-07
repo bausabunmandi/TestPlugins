@@ -194,6 +194,7 @@ class Bokepkamu : MainAPI() {
                     source = name,
                     name = "CDN Stream",
                     url = masterUrl,
+                    type = typeVideo,
                 )
             )
             
