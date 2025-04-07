@@ -60,14 +60,13 @@ class Bokepkamu : MainAPI() {
             // val content = article.selectFirst(".featured-content-image") ?: return@mapNotNull null
             val href = article.selectFirst("a")?.attr("href") ?: return@mapNotNull null
             val title = article.selectFirst(".post-thumbnail img")?.attr("alt") ?: "No Title"
-            val poster = article.selectFirst(".post-thumbnail img")?.attr("data-src")
-            val poster2 = article.selectFirst(".post-thumbnail img")?.attr("src")
+            val poster = article.selectFirst(".post-thumbnail img")?.attr("data-src") ?: article.selectFirst(".post-thumbnail img")?.attr("src")
 
             // println("POSTER :  $poster")
             // println("POSTER2 :  $poster2")
 
             newMovieSearchResponse(title, href, TvType.Movie) {
-                this.posterUrl = poster2
+                this.posterUrl = poster
             }
         }
 
@@ -176,7 +175,8 @@ class Bokepkamu : MainAPI() {
             println("===========================")
 
             // 1. Load the main document and extract the iframe URL.
-            val mainDoc = app.get(data).document
+
+            val mainDoc = app.get(data.removeSuffix("ERROR")).document
 
             print("DEBUG : $data")
             
