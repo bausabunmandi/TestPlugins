@@ -28,7 +28,7 @@ cloudstream {
     language = "id"
 
     // random cc logo i found
-    iconUrl = "https://www.google.com/s2/favicons?domain=sebokep.com&sz=%size%"
+    iconUrl = "https://www.google.com/s2/favicons?domain=ruangbokep.co&sz=%size%"
 }
 
 android {
