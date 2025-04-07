@@ -224,6 +224,7 @@ class Sebokep : MainAPI() {
                 newExtractorLink(
                     source = name,
                     name = "CDN Stream",
+                    type = typeVideo,
                     url = masterUrl
                 )
             )

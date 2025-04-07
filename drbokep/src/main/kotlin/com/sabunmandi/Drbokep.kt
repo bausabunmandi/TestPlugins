@@ -222,6 +222,7 @@ class Drbokep : MainAPI() {
                 newExtractorLink(
                     source = name,
                     name = "CDN Stream",
+                    type = typeVideo,
                     url = masterUrl
                 )
             )
