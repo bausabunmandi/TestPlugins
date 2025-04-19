@@ -206,13 +206,23 @@ class Igodesu : MainAPI() {
             
             // 5. Extract the HLS master URL dynamically from the unpacked script.
             // This regex will match any URL starting with http or https that ends with .m3u8 and includes any query parameters.
-            val masterUrl: String = Regex("""sources:\[\{\s*file:\s*["'](https?://[^"']+\.m3u8[^"']*)["']""")
-                .find(unPacked)
-                ?.groupValues?.get(1)
-                ?: throw ErrorLoadingException("HLS URL not found in unpacked script")
+            // val masterUrl: String = Regex("""sources:\[\{\s*file:\s*["'](https?://[^"']+\.m3u8[^"']*)["']""")
+            //     .find(unPacked)
+            //     ?.groupValues?.get(1)
+            //     ?: throw ErrorLoadingException("HLS URL not found in unpacked script")
+
+            // Auto Search for m3u8 url
+            val masterUrl = Regex("""["']([a-zA-Z0-9_]+)["']\s*:\s*["']([^"']+\.m3u8[^"']*)["']""")
+                .findAll(unPacked)
+                .map { it.groupValues[2] }
+                .toList()
+
+            if (masterUrl.isEmpty()) {
+                throw ErrorLoadingException("HLS URL not found in unpacked script")
+            }
+
             println("DEBUG - MASTER_URL: $masterUrl")
 
-            
             // 7. Return the extracted link via the callback.
             callback.invoke(
                 ExtractorLink(
