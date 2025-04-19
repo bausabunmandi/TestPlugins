@@ -212,14 +212,17 @@ class Igodesu : MainAPI() {
             //     ?: throw ErrorLoadingException("HLS URL not found in unpacked script")
 
             // Auto Search for m3u8 url
-            val masterUrl = Regex("""["']([a-zA-Z0-9_]+)["']\s*:\s*["']([^"']+\.m3u8[^"']*)["']""")
+            val urlCandidates = Regex("""["']([a-zA-Z0-9_]+)["']\s*:\s*["']([^"']+\.m3u8[^"']*)["']""")
                 .findAll(unPacked)
                 .map { it.groupValues[2] }
                 .toList()
 
-            if (masterUrl.isEmpty()) {
+            if (urlCandidates.isEmpty()) {
                 throw ErrorLoadingException("HLS URL not found in unpacked script")
             }
+
+            val masterUrl = urlCandidates.first()
+
 
             println("DEBUG - MASTER_URL: $masterUrl")
 
