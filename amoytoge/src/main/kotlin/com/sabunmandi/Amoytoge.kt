@@ -8,8 +8,8 @@ import org.jsoup.nodes.Element
 // https://perbokepan.xyz/
 // avtub.app
 class Amoytoge : MainAPI() {
-    override var mainUrl = "https://bokepnusa.net/"
-    override var name = "Bokepnusa"
+    override var mainUrl = "https://amoytoge.xyz/"
+    override var name = "Amoytoge"
     override val hasMainPage = true
     override val supportedTypes = setOf(TvType.Movie)
     // override val hasDownloadSupport = false
