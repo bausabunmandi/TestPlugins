@@ -59,8 +59,8 @@ class Amoytoge : MainAPI() {
             // Your existing item parsing logic
             // val content = article.selectFirst(".featured-content-image") ?: return@mapNotNull null
             val href = article.selectFirst("a")?.attr("href") ?: return@mapNotNull null
-            val title = article.selectFirst(".post-thumbnail-container img")?.attr("alt") ?: "No Title"
-            val poster = article.selectFirst(".post-thumbnail-container img")?.attr("data-src") ?: article.selectFirst(".post-thumbnail-container img")?.attr("src")
+            val title = article.selectFirst(".post-thumbnail img")?.attr("alt") ?: "No Title"
+            val poster = article.selectFirst(".post-thumbnail img")?.attr("data-src") ?: article.selectFirst(".post-thumbnail img")?.attr("src")
 
             // println("POSTER :  $poster")
             // println("POSTER2 :  $poster2")
