@@ -116,11 +116,7 @@ class Amoytoge : MainAPI() {
 
     // =========================== Load Links ===========================
     override suspend fun load(url: String): LoadResponse {
-        if(!loadExtractor(data, subtitleCallback, callback)) {
-            print("GAK KETEMU")
-        }
 
-        return false
         val document = app.get(url).document
         
         // Extract metadata from video-player div
@@ -176,7 +172,11 @@ class Amoytoge : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         try {
+            if(!loadExtractor(data, subtitleCallback, callback)) {
+                print("GAK KETEMU")
+            }
 
+            return false
             println("===========================")
 
             println("DEBUG : URL : $data")

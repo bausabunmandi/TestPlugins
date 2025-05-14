@@ -4,6 +4,8 @@ import com.lagradost.cloudstream3.plugins.CloudstreamPlugin
 import com.lagradost.cloudstream3.plugins.Plugin
 import com.lagradost.cloudstream3.extractors.FileMoon
 import com.lagradost.cloudstream3.extractors.LuluStream
+import com.lagradost.cloudstream3.extractors.LuluStream1
+import com.lagradost.cloudstream3.extractors.LuluStream2
 import android.content.Context
 
 @CloudstreamPlugin
