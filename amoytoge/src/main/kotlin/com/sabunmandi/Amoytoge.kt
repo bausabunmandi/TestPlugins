@@ -172,21 +172,20 @@ class Amoytoge : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         try {
+            println("===========================")
+
+            println("DEBUG : URL : $data")
+
+            val mainDoc = app.get(data).document
+
+            print("DEBUG : $mainDoc")
+            
             if(!loadExtractor(data, subtitleCallback, callback)) {
                 print("GAK KETEMU")
                 return false
             }
 
             return true
-            println("===========================")
-
-            println("DEBUG : URL : $data")
-
-            // 1. Load the main document and extract the iframe URL.
-
-            val mainDoc = app.get(data).document
-
-            print("DEBUG : $mainDoc")
             
             val masterUrl = mainDoc.selectFirst("video")?.attr("data-link")?.trim() ?: throw ErrorLoadingException("Video Source Not Found")
 
