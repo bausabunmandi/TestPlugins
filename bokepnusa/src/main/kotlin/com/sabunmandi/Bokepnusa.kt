@@ -147,7 +147,7 @@ class Bokepnusa : MainAPI() {
         // ?: document.selectFirst("iframe")?.attr("src")?.trim()
         // ?: throw ErrorLoadingException("No video found")
         // val videoUrl = document.selectFirst(".video-player iframe")?.attr("src")?.trim() ?: ""
-        val initialIframeUrl = document.selectFirst(".responsive-player iframe")?.attr("data-lzl-src")?.fixUrl()
+        val initialIframeUrl = document.selectFirst(".video-player iframe")?.attr("src")?.fixUrl()
         ?: throw ErrorLoadingException("No video iframe found")
         val videoUrl = initialIframeUrl
         // val videoUrl = resolveNestedIframe(initialIframeUrl)
@@ -171,21 +171,19 @@ class Bokepnusa : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         try {
-            if(!loadExtractor(data, subtitleCallback, callback)) {
-                print("GAK KETEMU")
-                return false
-            }
-
-            return true
             println("===========================")
 
             println("DEBUG : URL : $data")
 
-            // 1. Load the main document and extract the iframe URL.
-
             val mainDoc = app.get(data).document
+            
+            if(!loadExtractor(data, mainUrl, subtitleCallback, callback)) {
+                print("GAK KETEMU")
+                print("DEBUG : $mainDoc")
+                return false
+            }
 
-            print("DEBUG : $mainDoc")
+            return true
             
             val masterUrl = mainDoc.selectFirst("video")?.attr("data-link")?.trim() ?: throw ErrorLoadingException("Video Source Not Found")
 

@@ -14,5 +14,6 @@ class BokepnusaPlugin: Plugin() {
         registerExtractorAPI(LuluStream())
         registerExtractorAPI(FileMoon())
         registerExtractorAPI(Pemersatu())
+        registerExtractorAPI(Lulust())
     }
 }
