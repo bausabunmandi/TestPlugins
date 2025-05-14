@@ -148,8 +148,7 @@ class Amoytoge : MainAPI() {
         // ?: document.selectFirst("iframe")?.attr("src")?.trim()
         // ?: throw ErrorLoadingException("No video found")
         // val videoUrl = document.selectFirst(".video-player iframe")?.attr("src")?.trim() ?: ""
-        val initialIframeUrl = document.selectFirst(".responsive-player iframe")?.attr("src")?.fixUrl()
-        ?: throw ErrorLoadingException("No video iframe found")
+        val initialIframeUrl = document.select(".responsive-player iframe").attr("src").fixUrl()
         val videoUrl = initialIframeUrl
         // val videoUrl = resolveNestedIframe(initialIframeUrl)
 
@@ -177,11 +176,10 @@ class Amoytoge : MainAPI() {
             println("DEBUG : URL : $data")
 
             val mainDoc = app.get(data).document
-
-            print("DEBUG : $mainDoc")
             
             if(!loadExtractor(data, mainUrl, subtitleCallback, callback)) {
                 print("GAK KETEMU")
+                print("DEBUG : $mainDoc")
                 return false
             }
 
