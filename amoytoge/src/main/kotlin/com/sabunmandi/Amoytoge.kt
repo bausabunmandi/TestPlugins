@@ -5,7 +5,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
 import org.jsoup.nodes.Element
 
-// https://indostreaming.web.id
+// https://perbokepan.xyz/
 // avtub.app
 class Amoytoge : MainAPI() {
     override var mainUrl = "https://bokepnusa.net/"

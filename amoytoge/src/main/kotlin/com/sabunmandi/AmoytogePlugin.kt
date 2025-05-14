@@ -4,8 +4,6 @@ import com.lagradost.cloudstream3.plugins.CloudstreamPlugin
 import com.lagradost.cloudstream3.plugins.Plugin
 import com.lagradost.cloudstream3.extractors.FileMoon
 import com.lagradost.cloudstream3.extractors.LuluStream
-import com.lagradost.cloudstream3.extractors.LuluStream1
-import com.lagradost.cloudstream3.extractors.LuluStream2
 import android.content.Context
 
 @CloudstreamPlugin
@@ -14,8 +12,6 @@ class AmoytogePlugin: Plugin() {
         // All providers should be added in this manner. Please don't edit the providers list directly.
         registerMainAPI(Amoytoge())
         registerExtractorAPI(LuluStream())
-        registerExtractorAPI(LuluStream1())
-        registerExtractorAPI(LuluStream2())
         registerExtractorAPI(FileMoon())
         registerExtractorAPI(Pemersatu())
     }
