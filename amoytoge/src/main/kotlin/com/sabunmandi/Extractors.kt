@@ -9,6 +9,7 @@ import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
 import com.lagradost.cloudstream3.extractors.Filesim
 import com.lagradost.cloudstream3.extractors.JWPlayer
+import com.lagradost.cloudstream3.extractors.LuluStream
 
 class FileMoonTo : Filesim() {
     override var mainUrl = "https://filemoon.to"
@@ -19,3 +20,10 @@ class Pemersatu : JWPlayer() {
     override var mainUrl = "https://fem.pemersatu.link"
     override val name = "Pemersatu"
 }
+
+class Lulust : LuluStream() {
+    override var mainUrl = "https://lulu.st"
+    override val name = "Lulustream"
+}
+
+

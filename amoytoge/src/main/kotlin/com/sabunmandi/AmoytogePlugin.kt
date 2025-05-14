@@ -14,5 +14,6 @@ class AmoytogePlugin: Plugin() {
         registerExtractorAPI(LuluStream())
         registerExtractorAPI(FileMoon())
         registerExtractorAPI(Pemersatu())
+        registerExtractorAPI(Lulust())
     }
 }
