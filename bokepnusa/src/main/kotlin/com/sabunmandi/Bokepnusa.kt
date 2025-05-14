@@ -147,7 +147,7 @@ class Bokepnusa : MainAPI() {
         // ?: document.selectFirst("iframe")?.attr("src")?.trim()
         // ?: throw ErrorLoadingException("No video found")
         // val videoUrl = document.selectFirst(".video-player iframe")?.attr("src")?.trim() ?: ""
-        val initialIframeUrl = document.selectFirst(".video-player iframe")?.attr("src")?.fixUrl()
+        val initialIframeUrl = document.selectFirst(".responsive-player iframe")?.attr("data-lzl-src")?.fixUrl()
         ?: throw ErrorLoadingException("No video iframe found")
         val videoUrl = initialIframeUrl
         // val videoUrl = resolveNestedIframe(initialIframeUrl)
