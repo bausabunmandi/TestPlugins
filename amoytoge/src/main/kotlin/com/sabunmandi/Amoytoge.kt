@@ -174,9 +174,10 @@ class Amoytoge : MainAPI() {
         try {
             if(!loadExtractor(data, subtitleCallback, callback)) {
                 print("GAK KETEMU")
+                return false
             }
 
-            return false
+            return true
             println("===========================")
 
             println("DEBUG : URL : $data")

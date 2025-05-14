@@ -171,7 +171,12 @@ class Bokepnusa : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         try {
+            if(!loadExtractor(data, subtitleCallback, callback)) {
+                print("GAK KETEMU")
+                return false
+            }
 
+            return true
             println("===========================")
 
             println("DEBUG : URL : $data")
