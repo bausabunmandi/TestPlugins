@@ -35,4 +35,6 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    sourceSets["main"].java.srcDir("../common/src")
 }
+
