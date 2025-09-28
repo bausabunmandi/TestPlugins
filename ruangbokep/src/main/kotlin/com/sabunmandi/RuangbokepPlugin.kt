@@ -14,7 +14,6 @@ class RuangbokepPlugin : Plugin() {
         // registerExtractorAPI(FileMoonTo())
         // Register FileMoon extractor
         registerExtractorAPI(FileMoon())
-        registerExtractorAPI(Pemersatu())
         registerExtractorAPI(Putarvid())
     }
 }

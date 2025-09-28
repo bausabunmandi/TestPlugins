@@ -1,3 +1,4 @@
+// Version: ${System.currentTimeMillis()}
 package com.sabunmandi
 
 // import com.lagradost.api.Log
@@ -6,9 +7,6 @@ import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.Filesim
 import com.lagradost.cloudstream3.utils.*
-import com.lagradost.cloudstream3.utils.ExtractorApi
-import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.newExtractorLink
 
 class FileMoonTo : Filesim() {
     override var mainUrl = "https://filemoon.to"
@@ -28,7 +26,7 @@ class Pemersatu : ExtractorApi() {
     ) {
         try {
 
-            Log.e("PemersatuExtractor", "getUrl() called with URL: $url")
+            Log.d("PemersatuExtractor", "getUrl() called with URL: $url")
 
             val src = app.get(url, allowRedirects = false)
             // Log.e("PemersatuExtractor", "HEADERS: ${src.headers}")

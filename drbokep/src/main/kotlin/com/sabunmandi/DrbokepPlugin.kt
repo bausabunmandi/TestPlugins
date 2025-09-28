@@ -14,6 +14,5 @@ class DrbokepPlugin: Plugin() {
         // registerExtractorAPI(FileMoonTo())
         // Register FileMoon extractor
         registerExtractorAPI(FileMoon())
-        registerExtractorAPI(Pemersatu())
     }
 }

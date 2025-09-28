@@ -16,11 +16,6 @@ class FileMoonTo : Filesim() {
     override val name = "FileMoonTo"
 }
 
-class Pemersatu : JWPlayer() {
-    override var mainUrl = "https://fem.pemersatu.link"
-    override val name = "Pemersatu"
-}
-
 class Lulust : LuluStream() {
     override var mainUrl = "https://lulu.st"
     override val name = "Lulustream"

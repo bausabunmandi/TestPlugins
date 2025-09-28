@@ -122,29 +122,29 @@ subprojects {
                     )
                 }
                 // force-stop Cloudstream
-                exec {
-                    commandLine(
-                        "adb",
-                        "shell",
-                        "am",
-                        "force-stop",
-                        "com.lagradost.cloudstream3"
-                    )
-                }
+                // exec {
+                //     commandLine(
+                //         "adb",
+                //         "shell",
+                //         "am",
+                //         "force-stop",
+                //         "com.lagradost.cloudstream3"
+                //     )
+                // }
 
-                // restart Cloudstream
-                exec {
-                    commandLine(
-                        "adb",
-                        "shell",
-                        "monkey",
-                        "-p",
-                        "com.lagradost.cloudstream3",
-                        "-c",
-                        "android.intent.category.LAUNCHER",
-                        "1"
-                    )
-                }
+                // // restart Cloudstream
+                // exec {
+                //     commandLine(
+                //         "adb",
+                //         "shell",
+                //         "monkey",
+                //         "-p",
+                //         "com.lagradost.cloudstream3",
+                //         "-c",
+                //         "android.intent.category.LAUNCHER",
+                //         "1"
+                //     )
+                // }
 
                 println("🚀 Push successful. The plugin should now be in Cloudstream.")
             } else {
